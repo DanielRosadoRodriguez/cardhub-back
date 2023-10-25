@@ -11,6 +11,7 @@ class CreditCardProduct(models.Model):
 class Wallet(models.Model):
     credit_card_products = models.ManyToManyField(CreditCardProduct)
 
+
 class UserWithWallet(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
