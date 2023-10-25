@@ -15,4 +15,3 @@ class UserWithWallet(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
