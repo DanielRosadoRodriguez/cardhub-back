@@ -1,3 +1,4 @@
+from models import UserWithWallet
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -9,9 +10,8 @@ def submit_form(request):
         name = request.POST['name']
         password = request.POST['password']
         
-        print(f"Email: {email}")
-        print(f"Name: {name}")
-        print(f"Password: {password}")
+        usr: UserWithWallet = UserWithWallet(name=name, email=email, password=password)
+        usr.save()
 
         return HttpResponse("Form submitted successfully!")
     else:
