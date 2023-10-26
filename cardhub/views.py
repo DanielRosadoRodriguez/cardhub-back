@@ -1,4 +1,6 @@
 import json
+
+from cardhub.domain.Authenticator import Authenticator
 from .models import UserWithWallet
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -6,22 +8,43 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
-def submit_form(request):
+def sign_up(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            newUserWithWallet = createUser(data)
-            newUserWithWallet.save()
+            newUserWithWallet = _createUser(data)
+            _saveUser(newUserWithWallet)
         except json.JSONDecodeError as e:
-            print("Error al analizar JSON:", e)
+            print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
     else:
         return HttpResponse("Invalid form submission method")
     
 
-def createUser(data):
+@csrf_exempt
+def log_in(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            email = data['email']
+            password = data['password']
+            authenticator = Authenticator(email, password)
+            is_authenticated = authenticator.authenticate_user()
+            print(is_authenticated)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)  
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
+
+        
+
+def _createUser(data):
     name = data['name']
     email = data['email']
     password = data['password']
     newUserWithWallet = UserWithWallet(name, email, password)
     return newUserWithWallet
+
+def _saveUser(newUserWithWallet):
+    newUserWithWallet.save()
