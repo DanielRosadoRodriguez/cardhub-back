@@ -14,5 +14,5 @@ class Wallet(models.Model):
 
 class UserWithWallet(models.Model):
     name = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, primary_key=True)
     password = models.CharField(max_length=100)
