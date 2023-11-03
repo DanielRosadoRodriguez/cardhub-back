@@ -6,7 +6,7 @@ class User(models.Model):
     email = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    
+    card_holder = models.OneToOneField('CardHolder', on_delete=models.CASCADE, null=True)    
     
 class CreditCardProduct(models.Model):
     card_id = models.AutoField(primary_key=True)
@@ -17,7 +17,15 @@ class CreditCardProduct(models.Model):
     
     
 class CardHolder(models.Model):
-    credit_card_products = models.ManyToManyField(CreditCardProduct)
+    card_holder_id = models.AutoField(primary_key=True)
+    
+
+class CardHolderCards(models.Model):
+    card_holder = models.ForeignKey(CardHolder, on_delete=models.CASCADE)
+    card = models.ForeignKey(CreditCardProduct, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ('card_holder', 'card')
   
 
 class CardWebPage(models.Model):
