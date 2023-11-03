@@ -10,9 +10,10 @@ class User(models.Model):
     
 class CreditCardProduct(models.Model):
     card_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    associated_bank = models.CharField(max_length=100)
+    card_name = models.CharField(max_length=100)
+    bank_name = models.CharField(max_length=100)
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    annuity = models.DecimalField(max_digits=5, decimal_places=2)
     
     
 class CardHolder(models.Model):
