@@ -20,12 +20,10 @@ class CardHolder(models.Model):
     card_holder_id = models.AutoField(primary_key=True)
     
 
-class CardHolderCards(models.Model):
+class CardHolderCard(models.Model):
+    card_holder_cards_id = models.AutoField(primary_key=True)
     card_holder = models.ForeignKey(CardHolder, on_delete=models.CASCADE)
     card = models.ForeignKey(CreditCardProduct, on_delete=models.CASCADE)
-    
-    class Meta:
-        unique_together = ('card_holder', 'card')
   
 
 class CardWebPage(models.Model):
@@ -34,3 +32,13 @@ class CardWebPage(models.Model):
     page_content = models.TextField()
     associated_cards = models.OneToManyField(CreditCardProduct)    
 
+
+class AccountStatement(models.Model):
+    statement_id = models.AutoField(primary_key=True)
+    date = models.DateField()
+    cut_off_date = models.DateField()
+    payment_date = models.DateField()
+    current_debt = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_for_no_interest = models.DecimalField(max_digits=10, decimal_places=2)
+    card = models.ForeignKey(CardHolderCard, on_delete=models.CASCADE)
+        
