@@ -19,3 +19,10 @@ class CreditCardProduct(models.Model):
 class CardHolder(models.Model):
     credit_card_products = models.ManyToManyField(CreditCardProduct)
   
+
+class CardWebPage(models.Model):
+    pageID = models.AutoField(primary_key=True)
+    page_url = models.CharField(max_length=100)
+    page_content = models.TextField()
+    associated_cards = models.OneToManyField(CreditCardProduct)    
+
