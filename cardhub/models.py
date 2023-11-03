@@ -15,6 +15,6 @@ class CreditCardProduct(models.Model):
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2)
     
     
-class Wallet(models.Model):
+class CardHolder(models.Model):
     credit_card_products = models.ManyToManyField(CreditCardProduct)
   
