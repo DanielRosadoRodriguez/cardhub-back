@@ -1,7 +1,7 @@
 import json
 
 from cardhub.domain.Authenticator import Authenticator
-from .models import UserWithWallet
+from .models import User
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -43,7 +43,7 @@ def _createUser(data):
     name = data['name']
     email = data['email']
     password = data['password']
-    newUserWithWallet = UserWithWallet(name, email, password)
+    newUserWithWallet = User(name, email, password)
     return newUserWithWallet
 
 def _saveUser(newUserWithWallet):
