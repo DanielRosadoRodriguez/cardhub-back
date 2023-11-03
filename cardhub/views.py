@@ -12,8 +12,8 @@ def sign_up(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            newUserWithWallet = _createUser(data)
-            _saveUser(newUserWithWallet)
+            newUser = _createUser(data)
+            _saveUser(newUser)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -43,8 +43,8 @@ def _createUser(data):
     name = data['name']
     email = data['email']
     password = data['password']
-    newUserWithWallet = User(name, email, password)
-    return newUserWithWallet
+    newUser = User(name, email, password)
+    return newUser
 
-def _saveUser(newUserWithWallet):
-    newUserWithWallet.save()
+def _saveUser(newUser):
+    newUser.save()
