@@ -6,8 +6,8 @@ class User(models.Model):
     email = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    card_holder = models.OneToOneField('CardHolder', on_delete=models.CASCADE, null=True)    
     
+
 class CreditCardProduct(models.Model):
     card_id = models.AutoField(primary_key=True)
     card_name = models.CharField(max_length=100)
@@ -18,6 +18,7 @@ class CreditCardProduct(models.Model):
     
 class CardHolder(models.Model):
     card_holder_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     
 
 class CardHolderCard(models.Model):
