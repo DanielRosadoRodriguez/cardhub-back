@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('log_in/', views.log_in, name='log_in_form'),
     path('sign_up/', views.sign_up, name='sign_up_form'),
+    path('test_create_cardholder/', views.test_create_cardholder, name='test_create_cardholder'),
 ]

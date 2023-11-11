@@ -2,6 +2,7 @@ import json
 
 from cardhub.domain.Authenticator import Authenticator
 from .models import User
+from .models import CardHolder
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -42,8 +43,19 @@ def _createUser(data):
     name = data['name']
     email = data['email']
     password = data['password']
-    newUser = User(name, email, password)
+    newUser = User(name=name, email=email, password=password)
     return newUser
 
 def _saveUser(newUser):
     newUser.save()
+
+def _createCardHolderForUser(user: User) -> CardHolder:
+    card_holder = CardHolder(user=user)
+    card_holder.save()
+    return card_holder
+
+def test_create_cardholder(request):
+    user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
+    _saveUser(user)
+    _createCardHolderForUser(user)
+    return HttpResponse("Cardholder created successfully!")

@@ -18,14 +18,13 @@ class CreditCardProduct(models.Model):
     
 class CardHolder(models.Model):
     card_holder_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class CardHolderCard(models.Model):
     card_holder_cards_id = models.AutoField(primary_key=True)
     card_holder = models.ForeignKey(CardHolder, on_delete=models.CASCADE)
     card = models.ForeignKey(CreditCardProduct, on_delete=models.CASCADE)
-  
+
 
 class CardWebPage(models.Model):
     pageID = models.AutoField(primary_key=True)
