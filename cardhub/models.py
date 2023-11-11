@@ -13,7 +13,7 @@ class CreditCardProduct(models.Model):
     card_name = models.CharField(max_length=100)
     bank_name = models.CharField(max_length=100)
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2)
-    annuity = models.DecimalField(max_digits=5, decimal_places=2)
+    annuity = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     
     
 class CardHolder(models.Model):
