@@ -52,12 +52,6 @@ def _saveUser(newUser):
     newUser.save()
 
 
-def _createCardHolderForUser(user: User) -> CardHolder:
-    card_holder = CardHolder(user=user)
-    card_holder.save()
-    return card_holder
-
-
 def _createCreditCardProduct(data):
     card_name = data['card_name']
     bank_name = data['bank_name']
@@ -70,6 +64,12 @@ def _createCreditCardProduct(data):
 def _saveCreditCardProduct(newCreditCardProduct):
     newCreditCardProduct.save()
     
+    
+def _createCardHolderForUser(user: User) -> CardHolder:
+    card_holder = CardHolder(user=user)
+    card_holder.save()
+    return card_holder
+
     
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
