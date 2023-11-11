@@ -30,7 +30,7 @@ class CardWebPage(models.Model):
     pageID = models.AutoField(primary_key=True)
     page_url = models.CharField(max_length=100)
     page_content = models.TextField()
-    associated_cards = models.OneToManyField(CreditCardProduct)    
+    associated_cards = models.ForeignKey(CreditCardProduct, on_delete=models.CASCADE)
 
 
 class AccountStatement(models.Model):

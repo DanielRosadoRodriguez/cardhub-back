@@ -38,7 +38,6 @@ def log_in(request):
         return HttpResponse("Invalid form submission method")
 
         
-
 def _createUser(data):
     name = data['name']
     email = data['email']
