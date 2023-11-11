@@ -1,12 +1,13 @@
 import json
 
 from cardhub.domain.Authenticator import Authenticator
+from django.core.serializers import serialize
 from .models import User
 from .models import CardHolderCard
 from .models import CardHolder
 from .models import CreditCardProduct
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -56,6 +57,13 @@ def add_card_to_user_cardholder(request):
         return HttpResponse("Invalid form submission method")
     
         
+
+def get_all_cards(request):
+    cards = CreditCardProduct.objects.all()
+    cards_json = list(cards.values())
+    return JsonResponse(cards_json, safe=False)
+
+
 def _createUser(data):
     name = data['name']
     email = data['email']
