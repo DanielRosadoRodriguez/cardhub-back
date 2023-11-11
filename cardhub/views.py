@@ -39,7 +39,6 @@ def log_in(request):
     else:
         return HttpResponse("Invalid form submission method")
 
-
         
 def _createUser(data):
     name = data['name']
@@ -47,6 +46,7 @@ def _createUser(data):
     password = data['password']
     newUser = User(name=name, email=email, password=password)
     return newUser
+
 
 def _saveUser(newUser):
     newUser.save()
@@ -82,4 +82,3 @@ def test_create_card(request):
     card = _createCreditCardProduct({'card_name': 'Visa', 'bank_name': 'Banco de Chile', 'interest_rate': 0.35, 'annuity': 22.00})
     _saveCreditCardProduct(card)
     return HttpResponse("Card created successfully!")
-
