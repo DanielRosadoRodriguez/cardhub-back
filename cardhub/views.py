@@ -40,6 +40,20 @@ def log_in(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+@csrf_exempt
+def add_card_to_user_cardholder(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            card_holder = CardHolder.objects.get(user=data['email'])
+            card = CreditCardProduct.objects.get(card_id=data['card_id'])
+            _addCardToCardHolder(card_holder, card)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
+    
         
 def _createUser(data):
     name = data['name']
