@@ -24,4 +24,5 @@ urlpatterns = [
     path('sign_up/', views.sign_up, name='sign_up_form'),
     path('test_create_cardholder/', views.test_create_cardholder, name='test_create_cardholder'),
     path('test_create_card/', views.test_create_card, name='test_create_card'),
+    path('test_add_card_to_cardholder/', views.test_add_card_to_cardholder, name='test_add_card_to_cardholder'),
 ]
