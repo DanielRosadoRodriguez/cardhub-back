@@ -20,5 +20,6 @@ from cardhub import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('submit/', views.submit_form, name='submit_form')
+    path('log_in/', views.log_in, name='log_in_form'),
+    path('sign_up/', views.sign_up, name='sign_up_form'),
 ]
