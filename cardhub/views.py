@@ -40,6 +40,7 @@ def log_in(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+
 @csrf_exempt
 def add_card_to_user_cardholder(request):
     if request.method == 'POST':
