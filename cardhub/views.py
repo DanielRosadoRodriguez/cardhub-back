@@ -56,6 +56,20 @@ def add_card_to_user_cardholder(request):
     else:
         return HttpResponse("Invalid form submission method")
     
+    
+@csrf_exempt
+def remove_card_from_user_cardholder(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            card_holder = CardHolder.objects.get(user=data['email'])
+            card_to_delete = CreditCardProduct.objects.get(card_id=data['card_id'])
+            _removeCardFromCardHolder(card_holder, card_to_delete)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
         
 
 def get_all_cards(request):
@@ -99,6 +113,11 @@ def _addCardToCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card = CardHolderCard(card_holder=card_holder, card=card)
     card_holder_card.save()
 
+
+def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
+    card_holder_card = CardHolderCard.objects.get(card_holder=card_holder, card=card)
+    card_holder_card.delete()
+
     
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
@@ -117,4 +136,12 @@ def test_add_card_to_cardholder(request):
     card_holder = CardHolder.objects.get(user='joselito@gmail.com')
     card = CreditCardProduct.objects.get(card_id=1)
     _addCardToCardHolder(card_holder, card)
-    return HttpResponse("Cardholder created successfully!")
+    return HttpResponse("Cardholder card added successfully!")
+
+
+def test_remove_card_from_cardholder(request):
+    card_holder = CardHolder.objects.get(user='joselito@gmail.com')
+    card = CreditCardProduct.objects.get(card_id=1)
+    _removeCardFromCardHolder(card_holder, card)
+    return HttpResponse("Cardholder card deleted successfully!")
+    

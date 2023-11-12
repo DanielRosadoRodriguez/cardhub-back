@@ -27,4 +27,5 @@ urlpatterns = [
     path('test_add_card_to_cardholder/', views.test_add_card_to_cardholder, name='test_add_card_to_cardholder'),
     path('add_card_to_user_cardholder/', views.add_card_to_user_cardholder, name='add_card_to_user_cardholder'),
     path('get_all_cards/', views.get_all_cards, name='get_all_cards'),
+    path('test_remove_card_from_cardholder/', views.test_remove_card_from_cardholder, name='test_remove_card_from_cardholder'),
 ]
