@@ -2,7 +2,7 @@ import json
 
 from cardhub.domain.Authenticator import Authenticator
 from django.core.serializers import serialize
-from .models import User
+from .models import CardWebPage, User
 from .models import CardHolderCard
 from .models import CardHolder
 from .models import CreditCardProduct
@@ -139,6 +139,11 @@ def _generate_card_statement(card_from_cardholder: CardHolderCard):
     statement.save()
 
 
+def _add_website_to_card(card: CreditCardProduct, website_url: str, website_content: str):
+    card_website = CardWebPage(page_url=website_url, page_content=website_content, associated_cards=card)
+    card_website.save()
+
+
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
     _saveUser(user)
@@ -170,3 +175,9 @@ def test_generate_card_statement(request):
     card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
     _generate_card_statement(card_from_cardholder)
     return HttpResponse("Card statement generated successfully!")
+
+
+def test_add_website_to_card(request):
+    card = CreditCardProduct.objects.get(card_id=1)
+    _add_website_to_card(card, 'https://www.bancochile.cl', 'Banco de Chile')
+    return HttpResponse("Website added to card successfully!")

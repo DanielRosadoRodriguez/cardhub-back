@@ -31,5 +31,6 @@ urlpatterns = [
     path('remove_card_from_user_cardholder/', views.remove_card_from_user_cardholder, name='remove_card_from_user_cardholder'),
     path('test_generate_card_statement/', views.test_generate_card_statement, name='test_generate_card_statement'),
     path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
+    path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),
 
 ]
