@@ -33,5 +33,6 @@ urlpatterns = [
     path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
     path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),
     path('test_get_cardholder_statement/', views.test_get_cardholder_statement, name='test_get_cardholder_statement'),
+    path('test_get_all_user_cards/', views.test_get_all_user_cards, name='test_get_all_user_cards'),
 
 ]

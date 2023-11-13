@@ -93,6 +93,13 @@ def get_all_cards(request):
     return JsonResponse(cards_json, safe=False)
 
 
+def get_all_user_cards(request, user_email):
+    card_holder = CardHolder.objects.get(user=user_email)
+    card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
+    card_holder_cards_json = list(card_holder_cards.values())
+    return JsonResponse(card_holder_cards_json, safe=False)
+    
+
 def _get_cardholder_statement(cardholder_card_id):
     statements = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id)
     statements_json = list(statements.values())
@@ -193,3 +200,7 @@ def test_add_website_to_card(request):
 def test_get_cardholder_statement(request):
     cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
     return _get_cardholder_statement(cardholder_card)
+
+
+def test_get_all_user_cards(request):
+    return get_all_user_cards(request, 'joselito@gmail.com')
