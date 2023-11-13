@@ -73,6 +73,20 @@ def remove_card_from_user_cardholder(request):
         return HttpResponse("Invalid form submission method")
         
 
+@csrf_exempt
+def generate_card_statement(request):  
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
+            _generate_card_statement(card_from_cardholder)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
+
+
 def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
     cards_json = list(cards.values())
