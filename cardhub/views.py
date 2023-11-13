@@ -1,5 +1,7 @@
 import json
 
+from django.forms import model_to_dict
+
 from cardhub.domain.Authenticator import Authenticator
 from django.core.serializers import serialize
 from .models import CardWebPage, User
@@ -105,6 +107,11 @@ def _get_cardholder_statement(cardholder_card_id):
     statements_json = list(statements.values())
     return JsonResponse(statements_json, safe=False)
 
+
+def _get_last_statement(cardholder_card_id):
+    statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
+    statement_dict = model_to_dict(statement)
+    return JsonResponse(statement_dict, safe=False)
     
 
 def _createUser(data):
@@ -204,3 +211,7 @@ def test_get_cardholder_statement(request):
 
 def test_get_all_user_cards(request):
     return get_all_user_cards(request, 'joselito@gmail.com')
+
+def test_get_last_statement(request):
+    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
+    return _get_last_statement(cardholder_card)
