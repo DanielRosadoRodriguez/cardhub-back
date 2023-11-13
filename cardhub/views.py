@@ -93,6 +93,13 @@ def get_all_cards(request):
     return JsonResponse(cards_json, safe=False)
 
 
+def _get_cardholder_statement(cardholder_card_id):
+    statements = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id)
+    statements_json = list(statements.values())
+    return JsonResponse(statements_json, safe=False)
+
+    
+
 def _createUser(data):
     name = data['name']
     email = data['email']
@@ -181,3 +188,8 @@ def test_add_website_to_card(request):
     card = CreditCardProduct.objects.get(card_id=1)
     _add_website_to_card(card, 'https://www.bancochile.cl', 'Banco de Chile')
     return HttpResponse("Website added to card successfully!")
+
+
+def test_get_cardholder_statement(request):
+    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
+    return _get_cardholder_statement(cardholder_card)
