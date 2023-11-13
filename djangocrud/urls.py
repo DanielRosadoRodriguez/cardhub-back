@@ -29,4 +29,6 @@ urlpatterns = [
     path('get_all_cards/', views.get_all_cards, name='get_all_cards'),
     path('test_remove_card_from_cardholder/', views.test_remove_card_from_cardholder, name='test_remove_card_from_cardholder'),
     path('remove_card_from_user_cardholder/', views.remove_card_from_user_cardholder, name='remove_card_from_user_cardholder'),
+    path('test_generate_card_statement/', views.test_generate_card_statement, name='test_generate_card_statement'),
+
 ]

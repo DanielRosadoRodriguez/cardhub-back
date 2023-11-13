@@ -36,9 +36,9 @@ class CardWebPage(models.Model):
 
 class AccountStatement(models.Model):
     statement_id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    cut_off_date = models.DateField()
-    payment_date = models.DateField()
-    current_debt = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_for_no_interest = models.DecimalField(max_digits=10, decimal_places=2)
-    card = models.ForeignKey(CardHolderCard, on_delete=models.CASCADE)
+    date = models.DateField(null=True)
+    cut_off_date = models.DateField(null=True)
+    payment_date = models.DateField(null=True)
+    current_debt = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    payment_for_no_interest = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    card_from_cardholder = models.ForeignKey(CardHolderCard, on_delete=models.CASCADE)

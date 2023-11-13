@@ -6,6 +6,7 @@ from .models import User
 from .models import CardHolderCard
 from .models import CardHolder
 from .models import CreditCardProduct
+from .models import AccountStatement
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -119,6 +120,11 @@ def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card.delete()
 
     
+def _generate_card_statement(card_from_cardholder: CardHolderCard):
+    statement = AccountStatement(card_from_cardholder=card_from_cardholder)
+    statement.save()
+
+
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
     _saveUser(user)
@@ -145,3 +151,8 @@ def test_remove_card_from_cardholder(request):
     _removeCardFromCardHolder(card_holder, card)
     return HttpResponse("Cardholder card deleted successfully!")
     
+
+def test_generate_card_statement(request):
+    card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
+    _generate_card_statement(card_from_cardholder)
+    return HttpResponse("Card statement generated successfully!")
