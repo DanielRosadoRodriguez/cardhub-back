@@ -1,2 +1,3 @@
 *.env
 migrations
+cardhub/domain/__pycache__
