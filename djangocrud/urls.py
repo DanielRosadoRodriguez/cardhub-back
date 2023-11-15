@@ -20,5 +20,20 @@ from cardhub import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('submit/', views.submit_form, name='submit_form')
+    path('log_in/', views.log_in, name='log_in_form'),
+    path('sign_up/', views.sign_up, name='sign_up_form'),
+    path('test_create_cardholder/', views.test_create_cardholder, name='test_create_cardholder'),
+    path('test_create_card/', views.test_create_card, name='test_create_card'),
+    path('test_add_card_to_cardholder/', views.test_add_card_to_cardholder, name='test_add_card_to_cardholder'),
+    path('add_card_to_user_cardholder/', views.add_card_to_user_cardholder, name='add_card_to_user_cardholder'),
+    path('get_all_cards/', views.get_all_cards, name='get_all_cards'),
+    path('test_remove_card_from_cardholder/', views.test_remove_card_from_cardholder, name='test_remove_card_from_cardholder'),
+    path('remove_card_from_user_cardholder/', views.remove_card_from_user_cardholder, name='remove_card_from_user_cardholder'),
+    path('test_generate_card_statement/', views.test_generate_card_statement, name='test_generate_card_statement'),
+    path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
+    path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),
+    path('test_get_cardholder_statement/', views.test_get_cardholder_statement, name='test_get_cardholder_statement'),
+    path('test_get_all_user_cards/', views.test_get_all_user_cards, name='test_get_all_user_cards'),
+    path('test_get_last_statement/', views.test_get_last_statement, name='test_get_last_statement'),
+
 ]

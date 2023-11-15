@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from ..models import UserWithWallet
+from ..models import User
 
 class Authenticator:
     def __init__(self, email, password):
@@ -9,10 +9,10 @@ class Authenticator:
 
     def authenticate_user(self):
         try:
-            user = UserWithWallet.objects.get(email=self.email)
+            user = User.objects.get(email=self.email)
             if user.password == self.password:
                 return True
-        except UserWithWallet.DoesNotExist:
+        except User.DoesNotExist:
             print("User does not exist") 
 
         return False
