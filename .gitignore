@@ -1,2 +1,5 @@
 *.env
-*venv
+*.env
+.venv
+migrations
+cardhub/domain/__pycache__
