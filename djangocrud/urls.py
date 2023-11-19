@@ -35,5 +35,6 @@ urlpatterns = [
     path('test_get_cardholder_statement/', views.test_get_cardholder_statement, name='test_get_cardholder_statement'),
     path('test_get_all_user_cards/', views.test_get_all_user_cards, name='test_get_all_user_cards'),
     path('test_get_last_statement/', views.test_get_last_statement, name='test_get_last_statement'),
+    path('create_cardholder_for_user_given_email/', views.create_cardholder_for_user_given_email, name='create_cardholder_for_user_given_email'),
 
 ]

@@ -89,6 +89,20 @@ def generate_card_statement(request):
         return HttpResponse("Invalid form submission method")
 
 
+@csrf_exempt
+def create_cardholder_for_user_given_email(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user = User.objects.get(email=data['email'])
+            _createCardHolderForUser(user)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
+
+
 def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
     cards_json = list(cards.values())
