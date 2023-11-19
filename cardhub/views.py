@@ -21,6 +21,7 @@ def sign_up(request):
             data = json.loads(request.body)
             newUser = _createUser(data)
             _saveUser(newUser)
+            _createCardHolderForUser(newUser)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
