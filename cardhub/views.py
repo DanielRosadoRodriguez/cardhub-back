@@ -24,9 +24,6 @@ def sign_up(request):
             newUser = _createUser(data)
             is_signed_up = _saveUser(newUser)
             _createCardHolderForUser(newUser)
-            response_data = {"signed": str(is_signed_up)}
-            response_data_as_json = list(response_data.values())
-            return JsonResponse(response_data_as_json, safe=False)
         except json.JSONDecodeError as e:
             # TODO Extract into a method of the class (probably)
             print("Error analyzing JSON: ", e)
@@ -119,9 +116,16 @@ def get_all_cards(request):
 def get_all_user_cards(request, user_email):
     card_holder = CardHolder.objects.get(user=user_email)
     card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-    card_holder_cards_json = list(card_holder_cards.values())
-    return JsonResponse(card_holder_cards_json, safe=False)
-    
+    cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
+    cards_data = [
+        {
+            'card_holder_card': model_to_dict(card_holder_card), 
+            'card': model_to_dict(card),  
+        }
+        for card_holder_card, card in zip(card_holder_cards, cards)
+    ]
+    return JsonResponse(cards_data, safe=False)
+
 
 def _get_cardholder_statement(cardholder_card_id):
     statements = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id)
@@ -145,7 +149,6 @@ def _createUser(data):
 
 def _saveUser(newUser):
     newUser.save()
-    return True
 
 
 def _createCreditCardProduct(data):
