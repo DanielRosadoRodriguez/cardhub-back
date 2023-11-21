@@ -22,8 +22,11 @@ def sign_up(request):
         try:
             data = json.loads(request.body)
             newUser = _createUser(data)
-            _saveUser(newUser)
+            is_signed_up = _saveUser(newUser)
             _createCardHolderForUser(newUser)
+            response_data = {"signed": str(is_signed_up)}
+            response_data_as_json = list(response_data.values())
+            return JsonResponse(response_data_as_json, safe=False)
         except json.JSONDecodeError as e:
             # TODO Extract into a method of the class (probably)
             print("Error analyzing JSON: ", e)
@@ -142,6 +145,7 @@ def _createUser(data):
 
 def _saveUser(newUser):
     newUser.save()
+    return True
 
 
 def _createCreditCardProduct(data):
