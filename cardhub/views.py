@@ -188,7 +188,7 @@ def test_create_cardholder(request):
 
 
 def test_create_card(request):
-    card = _createCreditCardProduct({'card_name': 'Visa', 'bank_name': 'Banco de Chile', 'interest_rate': 0.35, 'annuity': 22.00})
+    card = _createCreditCardProduct({'card_name': 'MasterCard', 'bank_name': 'Banamex', 'interest_rate': 10, 'annuity': 500})
     _saveCreditCardProduct(card)
     return HttpResponse("Card created successfully!")
 
