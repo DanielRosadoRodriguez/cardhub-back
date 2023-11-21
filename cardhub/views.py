@@ -16,13 +16,16 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def sign_up(request):
+    # TODO Extract into a class that contains this operation
     if request.method == 'POST':
+        # TODO Extract into a method of the class (probably)
         try:
             data = json.loads(request.body)
             newUser = _createUser(data)
             _saveUser(newUser)
             _createCardHolderForUser(newUser)
         except json.JSONDecodeError as e:
+            # TODO Extract into a method of the class (probably)
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
     else:
