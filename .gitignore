@@ -3,4 +3,6 @@
 .venv
 migrations
 cardhub/domain/__pycache__
+cardhub/__pycache__
 *__pycache__
+*/__pycache__
