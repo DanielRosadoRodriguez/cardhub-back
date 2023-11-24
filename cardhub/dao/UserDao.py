@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from cardhub.models import User
+from .Dao import Dao
 
-class UserDao:
+class UserDao(Dao):
 
     def get(email: str) -> User:
         return User.objects.get(email=email)
