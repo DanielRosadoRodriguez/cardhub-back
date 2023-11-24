@@ -244,6 +244,7 @@ def _add_website_to_card(card: CreditCardProduct, website_url: str, website_cont
 
 
 def _get_all_user_statements(user: User):
+    print("TEST")
     card_holder = CardHolder.objects.get(user=user)
     card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
     statements = AccountStatement.objects.filter(card_from_cardholder__in=card_holder_cards)
