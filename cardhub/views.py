@@ -180,8 +180,20 @@ def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card.delete()
 
     
-def _generate_card_statement(card_from_cardholder: CardHolderCard):
-    statement = AccountStatement(card_from_cardholder=card_from_cardholder)
+def _generate_card_statement(card: CardHolderCard):
+    statement = AccountStatement(card_from_cardholder=card)
+    statement.save()
+
+
+def _generate_card_statement_w_params(card: CardHolderCard, params: dict):
+    statement = AccountStatement(
+        date=params['date'],
+        cut_off_date=params['cut_off_date'],
+        payment_date=params['payment_date'],
+        current_debt=params['current_debt'],
+        payment_for_no_interest=params['pni'],
+        card_from_cardholder=card
+    )
     statement.save()
 
 
@@ -237,6 +249,20 @@ def test_get_cardholder_statement(request):
 def test_get_all_user_cards(request):
     return get_all_user_cards(request, 'joselito@gmail.com')
 
+
 def test_get_last_statement(request):
     cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
     return _get_last_statement(cardholder_card)
+
+
+def test_get_stetement_w_all_params(request):
+    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
+    params = {
+        'date': '2021-05-01',
+        'cut_off_date': '2021-05-15',
+        'payment_date': '2021-05-30',
+        'current_debt': 10000.00,
+        'pni': 5000.00
+    }
+    _generate_card_statement_w_params(cardholder_card, params)
+    return HttpResponse("Card statement generated successfully!")
