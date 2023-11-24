@@ -15,25 +15,30 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
-def sign_up(request):
-    # TODO Extract into a class that contains this operation
+def signup(request):
     if request.method == 'POST':
-        # TODO Extract into a method of the class (probably)
         try:
             data = json.loads(request.body)
             newUser = _createUser(data)
             is_signed_up = _saveUser(newUser)
-            _createCardHolderForUser(newUser)
+            if is_signed_up:
+                _createCardHolderForUser(newUser)
+                response_data = {"signed": True}
+            else:
+                print("Error during signing")
+                response_data = {"signed": False}
+
+            return JsonResponse([str(response_data["signed"])], safe=False)
         except json.JSONDecodeError as e:
-            # TODO Extract into a method of the class (probably)
             print("Error analyzing JSON: ", e)
-        return HttpResponse("Form submitted successfully!")
+            return JsonResponse(["False"], safe=False)
     else:
         return HttpResponse("Invalid form submission method")
+
     
 
 @csrf_exempt
-def log_in(request):
+def login(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -41,12 +46,16 @@ def log_in(request):
             password = data['password']
             authenticator = Authenticator(email, password)
             is_authenticated = authenticator.authenticate_user()
+            response_data = {"authenticated": str(is_authenticated)}  # Convierte a cadena para JSON
+            response_data_json = list(response_data.values())
             print(is_authenticated)
+            return JsonResponse(response_data_json, safe=False)
+            
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)  
-        return HttpResponse("Form submitted successfully!")
+        return HttpResponse(is_authenticated)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
 
 @csrf_exempt
@@ -106,25 +115,41 @@ def create_cardholder_for_user_given_email(request):
     else:
         return HttpResponse("Invalid form submission method")
 
-
+@csrf_exempt
 def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
     cards_json = list(cards.values())
     return JsonResponse(cards_json, safe=False)
 
+@csrf_exempt
+def get_all_user_cards(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_email = data.get('email', '')
+        
+        try:
+            card_holder = CardHolder.objects.get(user=user_email)
+        except CardHolder.DoesNotExist:
+            return JsonResponse([], safe=False)
 
-def get_all_user_cards(request, user_email):
-    card_holder = CardHolder.objects.get(user=user_email)
-    card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-    cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
-    cards_data = [
-        {
-            'card_holder_card': model_to_dict(card_holder_card), 
-            'card': model_to_dict(card),  
-        }
-        for card_holder_card, card in zip(card_holder_cards, cards)
-    ]
-    return JsonResponse(cards_data, safe=False)
+        card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
+        
+        if not card_holder_cards.exists():
+            return JsonResponse([], safe=False)
+
+        cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
+
+        cards_data = [
+            {
+                'card_holder_card': model_to_dict(card_holder_card),
+                'card': model_to_dict(card),
+            }
+            for card_holder_card, card in zip(card_holder_cards, cards)
+        ]
+
+        return JsonResponse(cards_data, safe=False)
+    else:
+        return HttpResponse("Invalid form submission method")
 
 
 def _get_cardholder_statement(cardholder_card_id):
@@ -148,7 +173,12 @@ def _createUser(data):
 
 
 def _saveUser(newUser):
-    newUser.save()
+    try:
+        newUser.save()
+        return True
+    except Exception as e:
+        print(f"Error saving user: {e}")
+        return False
 
 
 def _createCreditCardProduct(data):
@@ -245,9 +275,9 @@ def test_get_cardholder_statement(request):
     cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
     return _get_cardholder_statement(cardholder_card)
 
-
-def test_get_all_user_cards(request):
-    return get_all_user_cards(request, 'joselito@gmail.com')
+# @csrf_exempt
+# def test_get_all_user_cards(request):
+#     return get_all_user_cards(request, 'david')
 
 
 def test_get_last_statement(request):
