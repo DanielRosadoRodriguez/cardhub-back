@@ -1,15 +1,16 @@
-from django.test import SimpleTestCase
+from django.http import JsonResponse
+from django.test import TransactionTestCase
 from cardhub.dao.UserDao import UserDao
 from cardhub.models import User
 
-class TestUserDao(SimpleTestCase):
+class TestUserDao(TransactionTestCase):
     
-    
-    def test_get_user_by_email(self):
-        expected_user: User = User(
-            name='joselito',
-            email='joselito@gmail.com',
-            password='123456'
+    def test_create_user(self):
+        user: User = User(
+            name='test',
+            email='test@test.com',
+            password='testpassword'
         )
-        received_user = UserDao.get(email='joselito@gmail.com')
-        assert expected_user == received_user
+        expected_response:JsonResponse = JsonResponse({'status': 'success'})
+        response:JsonResponse = UserDao.save(user)
+        assert response.content == expected_response.content
