@@ -13,7 +13,7 @@ class UserDao(Dao):
         return users
 
 
-    def save(user: User) -> JsonResponse:
+    def save(self, user: User) -> JsonResponse:
         user.save()
         return JsonResponse({'status': 'success'})
 

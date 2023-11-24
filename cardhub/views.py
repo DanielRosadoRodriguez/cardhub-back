@@ -1,4 +1,5 @@
 import json
+from .dao.UserDao import UserDao
 
 from django.forms import model_to_dict
 
@@ -19,22 +20,15 @@ def signup(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            newUser = _createUser(data)
-            is_signed_up = _saveUser(newUser)
-            if is_signed_up:
-                _createCardHolderForUser(newUser)
-                response_data = {"signed": True}
-            else:
-                print("Error during signing")
-                response_data = {"signed": False}
-
+            newUser: User = _createUser(data)
+            UserDao().save(newUser)
+            _createCardHolderForUser(newUser)
+            response_data = {"signed": True}
             return JsonResponse([str(response_data["signed"])], safe=False)
         except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
             return JsonResponse(["False"], safe=False)
     else:
         return HttpResponse("Invalid form submission method")
-
     
 
 @csrf_exempt
@@ -194,13 +188,8 @@ def _createUser(data):
     return newUser
 
 
-def _saveUser(newUser):
-    try:
-        newUser.save()
-        return True
-    except Exception as e:
-        print(f"Error saving user: {e}")
-        return False
+def _saveUser(newUser: User) -> JsonResponse:
+    return UserDao().save(newUser)
 
 
 def _createCreditCardProduct(data):
