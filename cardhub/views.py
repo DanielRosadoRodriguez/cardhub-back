@@ -103,6 +103,27 @@ def generate_card_statement(request):
 
 
 @csrf_exempt
+def generate_statement_w_params(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
+            params = {
+                'date': data['date'],
+                'cut_off_date': data['cut_off_date'],
+                'payment_date': data['payment_date'],
+                'current_debt': data['current_debt'],
+                'pni': data['pni']
+            }
+            _generate_card_statement_w_params(card_from_cardholder, params)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+        return HttpResponse("Form submitted successfully!")
+    else:
+        return HttpResponse("Invalid form submission method")
+    
+
+@csrf_exempt
 def create_cardholder_for_user_given_email(request):
     if request.method == 'POST':
         try:
@@ -120,6 +141,7 @@ def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
     cards_json = list(cards.values())
     return JsonResponse(cards_json, safe=False)
+
 
 @csrf_exempt
 def get_all_user_cards(request):
@@ -232,6 +254,13 @@ def _add_website_to_card(card: CreditCardProduct, website_url: str, website_cont
     card_website.save()
 
 
+def _get_all_user_statements(user: User):
+    card_holder = CardHolder.objects.get(user=user)
+    card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
+    statements = AccountStatement.objects.filter(card_from_cardholder__in=card_holder_cards)
+    return statements
+
+
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
     _saveUser(user)
@@ -261,7 +290,14 @@ def test_remove_card_from_cardholder(request):
 
 def test_generate_card_statement(request):
     card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
-    _generate_card_statement(card_from_cardholder)
+    data = {
+        'date': None,
+        'cut_off_date': None,
+        'payment_date': None,
+        'current_debt': None,
+        'pni': None
+    }
+    _generate_card_statement_w_params(card_from_cardholder,data)
     return HttpResponse("Card statement generated successfully!")
 
 
@@ -274,10 +310,6 @@ def test_add_website_to_card(request):
 def test_get_cardholder_statement(request):
     cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
     return _get_cardholder_statement(cardholder_card)
-
-# @csrf_exempt
-# def test_get_all_user_cards(request):
-#     return get_all_user_cards(request, 'david')
 
 
 def test_get_last_statement(request):
@@ -296,3 +328,36 @@ def test_get_stetement_w_all_params(request):
     }
     _generate_card_statement_w_params(cardholder_card, params)
     return HttpResponse("Card statement generated successfully!")
+
+
+def test_create_statement_w_some_params(request):
+    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
+    params = {
+        'date': '2021-05-01',
+        'cut_off_date': '2021-05-15',
+        'payment_date': None,
+        'current_debt': None,
+        'pni': None
+    }
+    _generate_card_statement_w_params(cardholder_card, params)
+    return HttpResponse("Card statement generated successfully!")
+
+
+def test_create_statement_without_params(request):
+    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
+    params = {
+        'date': None,
+        'cut_off_date': None,
+        'payment_date': None,
+        'current_debt': None,
+        'pni': None
+    }
+    _generate_card_statement_w_params(cardholder_card, params)
+    return HttpResponse("Card statement generated successfully!")
+
+
+def test_get_all_user_statements(request):
+    print("TEST")
+    user = User.objects.get(email='joselito@gmail.com')
+    return JsonResponse(list(_get_all_user_statements(user).values()), safe=False)
+

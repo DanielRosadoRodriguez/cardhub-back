@@ -37,5 +37,8 @@ urlpatterns = [
     path('test_get_last_statement/', views.test_get_last_statement, name='test_get_last_statement'),
     path('create_cardholder_for_user_given_email/', views.create_cardholder_for_user_given_email, name='create_cardholder_for_user_given_email'),
     path('test_get_stetement_w_all_params/', views.test_get_stetement_w_all_params, name='test_get_stetement_w_all_params'),
+    path('test_get_all_user_statements/', views.test_get_all_user_statements, name='test_get_all_user_statements'),
+    path('test_create_statement_w_some_params/', views.test_create_statement_w_some_params, name='test_create_statement_w_some_params'),
+    path('test_create_statement_without_params/', views.test_create_statement_without_params, name='test_create_statement_without_params'),
 
 ]
