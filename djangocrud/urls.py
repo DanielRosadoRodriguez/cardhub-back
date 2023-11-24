@@ -20,8 +20,8 @@ from cardhub import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('log_in/', views.log_in, name='log_in_form'),
-    path('sign_up/', views.sign_up, name='sign_up_form'),
+    path('login/', views.login, name='log_in_form'),
+    path('signup/', views.signup, name='sign_up_form'),
     path('test_create_cardholder/', views.test_create_cardholder, name='test_create_cardholder'),
     path('test_create_card/', views.test_create_card, name='test_create_card'),
     path('test_add_card_to_cardholder/', views.test_add_card_to_cardholder, name='test_add_card_to_cardholder'),
@@ -33,7 +33,7 @@ urlpatterns = [
     path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
     path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),
     path('test_get_cardholder_statement/', views.test_get_cardholder_statement, name='test_get_cardholder_statement'),
-    path('test_get_all_user_cards/', views.test_get_all_user_cards, name='test_get_all_user_cards'),
+    path('get_all_user_cards/', views.get_all_user_cards, name='test_get_all_user_cards'),
     path('test_get_last_statement/', views.test_get_last_statement, name='test_get_last_statement'),
     path('create_cardholder_for_user_given_email/', views.create_cardholder_for_user_given_email, name='create_cardholder_for_user_given_email'),
 
