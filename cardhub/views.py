@@ -55,7 +55,7 @@ def login(request):
             print("Error analyzing JSON: ", e)  
         return HttpResponse(is_authenticated)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
 
 @csrf_exempt
