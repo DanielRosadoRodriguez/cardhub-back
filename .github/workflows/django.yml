@@ -17,6 +17,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: 'Create env file'
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
