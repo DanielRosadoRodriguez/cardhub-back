@@ -31,8 +31,11 @@ class UserDao(Dao):
 
 
     def delete(self, user: User) -> JsonResponse:
-        user.delete()
-        return JsonResponse({'status': 'success'})
+        try: 
+            user.delete()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': e})
 
 
     def _build_user(self, params: dict) -> User:
