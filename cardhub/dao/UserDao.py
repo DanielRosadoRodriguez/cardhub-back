@@ -4,11 +4,11 @@ from .Dao import Dao
 
 class UserDao(Dao):
 
-    def get(email: str) -> User:
+    def get(self, email: str) -> User:
         return User.objects.get(email=email)
 
 
-    def get_all() -> list[User]:
+    def get_all(self) -> list[User]:
         users = User.objects.all()
         return users
 
@@ -18,7 +18,7 @@ class UserDao(Dao):
         return JsonResponse({'status': 'success'})
 
 
-    def update(user: User, params: dict) -> JsonResponse:
+    def update(self, user: User, params: dict) -> JsonResponse:
         user = User(
             name=params['name'],
             email=params['email'],
@@ -28,6 +28,6 @@ class UserDao(Dao):
         return JsonResponse({'status': 'success'})
 
 
-    def delete(user: User) -> JsonResponse:
+    def delete(self, user: User) -> JsonResponse:
         user.delete()
         return JsonResponse({'status': 'success'})
