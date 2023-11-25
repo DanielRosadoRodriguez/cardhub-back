@@ -14,3 +14,4 @@ class TestUserDao(TransactionTestCase):
         expected_response:JsonResponse = JsonResponse({'status': 'success'})
         response:JsonResponse = UserDao().save(user=user)
         assert response.content == expected_response.content
+
