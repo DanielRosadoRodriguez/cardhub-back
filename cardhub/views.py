@@ -1,4 +1,6 @@
 import json
+
+from .dao.AccountStatementDao import AccountStatementDao
 from .dao.UserDao import UserDao
 
 from django.forms import model_to_dict
@@ -87,7 +89,16 @@ def generate_card_statement(request):
         try:
             data = json.loads(request.body)
             card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
-            _generate_card_statement(card_from_cardholder)
+            params = {
+                'date': data['date'],
+                'cut_off_date': data['cut_off_date'],
+                'payment_date': data['payment_date'],
+                'current_debt': data['current_debt'],
+                'pni': data['pni'],
+                'card_from_cardholder': card_from_cardholder
+            }
+            statement = AccountStatementDao().build_card_statement(params)
+            AccountStatementDao().save(statement)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -106,9 +117,11 @@ def generate_statement_w_params(request):
                 'cut_off_date': data['cut_off_date'],
                 'payment_date': data['payment_date'],
                 'current_debt': data['current_debt'],
-                'pni': data['pni']
+                'pni': data['pni'],
+                'card_from_cardholder': card_from_cardholder
             }
-            _generate_card_statement_w_params(card_from_cardholder, params)
+            statement = AccountStatementDao().build_card_statement(params)
+            AccountStatementDao().save(statement)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -210,23 +223,6 @@ def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card = CardHolderCard.objects.get(card_holder=card_holder, card=card)
     card_holder_card.delete()
 
-    
-def _generate_card_statement(card: CardHolderCard):
-    statement = AccountStatement(card_from_cardholder=card)
-    statement.save()
-
-
-def _generate_card_statement_w_params(card: CardHolderCard, params: dict):
-    statement = AccountStatement(
-        date=params['date'],
-        cut_off_date=params['cut_off_date'],
-        payment_date=params['payment_date'],
-        current_debt=params['current_debt'],
-        payment_for_no_interest=params['pni'],
-        card_from_cardholder=card
-    )
-    statement.save()
-
 
 def _add_website_to_card(card: CreditCardProduct, website_url: str, website_content: str):
     card_website = CardWebPage(page_url=website_url, page_content=website_content, associated_cards=card)
@@ -269,14 +265,16 @@ def test_remove_card_from_cardholder(request):
 
 def test_generate_card_statement(request):
     card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
-    data = {
+    params = {
         'date': None,
         'cut_off_date': None,
         'payment_date': None,
         'current_debt': None,
-        'pni': None
+        'pni': None,
+        'card_from_cardholder': card_from_cardholder
     }
-    _generate_card_statement_w_params(card_from_cardholder,data)
+    statement = AccountStatementDao().build_card_statement(params)
+    AccountStatementDao().save(statement)
     return HttpResponse("Card statement generated successfully!")
 
 
@@ -296,47 +294,7 @@ def test_get_last_statement(request):
     return _get_last_statement(cardholder_card)
 
 
-def test_get_stetement_w_all_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': '2021-05-01',
-        'cut_off_date': '2021-05-15',
-        'payment_date': '2021-05-30',
-        'current_debt': 10000.00,
-        'pni': 5000.00
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
-def test_create_statement_w_some_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': '2021-05-01',
-        'cut_off_date': '2021-05-15',
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
-def test_create_statement_without_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': None,
-        'cut_off_date': None,
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
 def test_get_all_user_statements(request):
-    print("TEST")
     user = User.objects.get(email='joselito@gmail.com')
     return JsonResponse(list(_get_all_user_statements(user).values()), safe=False)
 

@@ -23,7 +23,7 @@ class AccountStatementDao(Dao):
 
     def update(self, card_statement: AccountStatement, params: dict) -> JsonResponse:
         try:
-            card_statement = self._build_card_statement(params) 
+            card_statement = self.build_card_statement(params) 
             card_statement.save()
             return JsonResponse({'status': 'success'})
         except Exception as e:
@@ -38,7 +38,7 @@ class AccountStatementDao(Dao):
             return JsonResponse({'status': 'error', 'message': e})
 
 
-    def _build_card_statement(self, params: dict) -> AccountStatement:
+    def build_card_statement(self, params: dict) -> AccountStatement:
         return AccountStatement(
             statement_id = params.get('statement_id'),
             date = params.get('date'),
@@ -48,3 +48,4 @@ class AccountStatementDao(Dao):
             payment_for_no_interest = params.get('pni'),
             card_from_cardholder = params.get('card_from_cardholder')
         )
+
