@@ -14,20 +14,30 @@ class UserDao(Dao):
 
 
     def save(self, user: User) -> JsonResponse:
-        user.save()
-        return JsonResponse({'status': 'success'})
+        try:
+            user.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': e})
 
 
     def update(self, user: User, params: dict) -> JsonResponse:
-        user = User(
-            name=params['name'],
-            email=params['email'],
-            password=params['password']
-        )
-        user.save()
-        return JsonResponse({'status': 'success'})
+        try:
+            user = self._build_user(params) 
+            user.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': e})
 
 
     def delete(self, user: User) -> JsonResponse:
         user.delete()
         return JsonResponse({'status': 'success'})
+
+
+    def _build_user(self, params: dict) -> User:
+        return User(
+            name=params['name'],
+            email=params['email'],
+            password=params['password']
+        )

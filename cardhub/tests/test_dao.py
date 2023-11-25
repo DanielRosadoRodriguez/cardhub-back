@@ -11,9 +11,7 @@ class TestUserDao(TransactionTestCase):
             email='test@test.com',
             password='testpassword'
         )  
-        
         self.test_users: list[User] = self._build_test_users()
-        
         self.user_dao: UserDao = UserDao()
     
     
