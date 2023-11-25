@@ -63,7 +63,7 @@ def add_card_to_user_cardholder(request):
         response = list([{"email": data["email"], "cardholder_card_id": cardholder_card_id}])
         return JsonResponse(response, safe=False)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
     
 @csrf_exempt
