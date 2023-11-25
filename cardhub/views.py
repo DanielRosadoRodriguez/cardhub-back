@@ -42,9 +42,7 @@ def login(request):
             is_authenticated = authenticator.authenticate_user()
             response_data = {"authenticated": str(is_authenticated)}  # Convierte a cadena para JSON
             response_data_json = list(response_data.values())
-            print(is_authenticated)
             return JsonResponse(response_data_json, safe=False)
-            
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)  
         return HttpResponse(is_authenticated)
