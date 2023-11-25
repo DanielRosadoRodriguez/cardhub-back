@@ -35,6 +35,15 @@ class TestUserDao(TransactionTestCase):
         assert response_users == expected_users
 
         
+    def test_update_user_name(self):
+        expected_response:JsonResponse = JsonResponse({'status': 'success'})
+        self.user_dao.save(user=self.test_user)
+        new_name = 'new_test_name'
+        response_update = self.user_dao.update(user=self.test_user, params={'email':self.test_user.email, 'name': new_name, 'password': self.test_user.password})
+        response_user: User = UserDao().get(self.test_user.email)
+        assert response_user.name == new_name and response_update.content == expected_response.content
+                
+                
     def _build_test_users(self):
         return [ 
             User(
