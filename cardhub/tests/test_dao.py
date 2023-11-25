@@ -5,7 +5,7 @@ from cardhub.models import User
 
 class TestUserDao(TransactionTestCase):
     
-    def test_create_user(self):
+    def test_save_user(self):
         user: User = User(
             name='test',
             email='test@test.com',
