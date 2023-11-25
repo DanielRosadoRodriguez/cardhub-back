@@ -188,10 +188,6 @@ def _createUser(data):
     return newUser
 
 
-def _saveUser(newUser: User) -> JsonResponse:
-    return UserDao().save(newUser)
-
-
 def _createCreditCardProduct(data):
     card_name = data['card_name']
     bank_name = data['bank_name']
@@ -253,7 +249,7 @@ def _get_all_user_statements(user: User):
 
 def test_create_cardholder(request):
     user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
-    _saveUser(user)
+    UserDao().save(user)
     _createCardHolderForUser(user)
     return HttpResponse("Cardholder created successfully!")
 
