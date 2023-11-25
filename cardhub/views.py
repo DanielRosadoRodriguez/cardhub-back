@@ -68,7 +68,6 @@ def add_card_to_user_cardholder(request):
         return HttpResponse("Invalid form submission method")
 
     
-    
 @csrf_exempt
 def remove_card_from_user_cardholder(request):
     if request.method == 'POST':
