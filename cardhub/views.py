@@ -65,10 +65,11 @@ def add_card_to_user_cardholder(request):
             data = json.loads(request.body)
             card_holder = CardHolder.objects.get(user=data['email'])
             card = CreditCardProduct.objects.get(card_id=data['card_id'])
-            _addCardToCardHolder(card_holder, card)
+            cardholder_card_id = _addCardToCardHolder(card_holder, card)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
-        return HttpResponse("Form submitted successfully!")
+        response = list([{"email": data["email"], "cardholder_card_id": cardholder_card_id}])
+        return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
     
@@ -107,7 +108,9 @@ def generate_statement_w_params(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            print(data['card_holder_cards_id'])
             card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
+            
             params = {
                 'date': data['date'],
                 'cut_off_date': data['cut_off_date'],
@@ -225,6 +228,8 @@ def _createCardHolderForUser(user: User) -> CardHolder:
 def _addCardToCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card = CardHolderCard(card_holder=card_holder, card=card)
     card_holder_card.save()
+    print("el id de la card es: " , card_holder_card.card_holder_cards_id)
+    return card_holder_card.card_holder_cards_id
 
 
 def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
