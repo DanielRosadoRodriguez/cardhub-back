@@ -20,7 +20,7 @@ def signup(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            newUser: User = _createUser(data)
+            newUser: User = UserDao().build_user(data)
             UserDao().save(newUser)
             _createCardHolderForUser(newUser)
             response_data = {"signed": True}
@@ -179,14 +179,6 @@ def _get_last_statement(cardholder_card_id):
     return JsonResponse(statement_dict, safe=False)
     
 
-def _createUser(data):
-    name = data['name']
-    email = data['email']
-    password = data['password']
-    newUser = User(name=name, email=email, password=password)
-    return newUser
-
-
 def _createCreditCardProduct(data):
     card_name = data['card_name']
     bank_name = data['bank_name']
@@ -249,7 +241,7 @@ def _get_all_user_statements(user: User):
 
 
 def test_create_cardholder(request):
-    user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
+    user = UserDao().build_user({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
     UserDao().save(user)
     _createCardHolderForUser(user)
     return HttpResponse("Cardholder created successfully!")

@@ -23,7 +23,7 @@ class UserDao(Dao):
 
     def update(self, user: User, params: dict) -> JsonResponse:
         try:
-            user = self._build_user(params) 
+            user = self.build_user(params) 
             user.save()
             return JsonResponse({'status': 'success'})
         except Exception as e:
@@ -38,7 +38,7 @@ class UserDao(Dao):
             return JsonResponse({'status': 'error', 'message': e})
 
 
-    def _build_user(self, params: dict) -> User:
+    def build_user(self, params: dict) -> User:
         return User(
             name=params['name'],
             email=params['email'],
