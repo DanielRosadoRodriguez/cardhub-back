@@ -53,6 +53,13 @@ class TestUserDao(TransactionTestCase):
         assert response_user.password == new_password and response_update.content == expected_response.content
 
 
+    def test_delete_user(self):
+        expected_response:JsonResponse = JsonResponse({'status': 'success'})
+        self.user_dao.save(user=self.test_user)
+        response_delete = self.user_dao.delete(user=self.test_user)
+        assert response_delete.content == expected_response.content
+        
+        
     def _build_test_users(self):
         return [ 
             User(
