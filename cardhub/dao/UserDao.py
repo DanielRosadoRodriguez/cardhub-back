@@ -9,7 +9,7 @@ class UserDao(Dao):
 
 
     def get_all(self) -> list[User]:
-        users = User.objects.all()
+        users = list(User.objects.all())
         return users
 
 
