@@ -61,12 +61,12 @@ def add_card_to_user_cardholder(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            card_holder = CardHolder.objects.get(user=data['email'])
-            card = CreditCardProduct.objects.get(card_id=data['card_id'])
+            card_holder = CardHolderDao().get(data['email']) 
+            card = CreditCardProductDao().get(data['card_id'])
             card_holder_card = card_holder.add_card(card)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
-        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.id}])
+        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.card_id}])
         return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")

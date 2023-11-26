@@ -21,16 +21,15 @@ class CardHolder(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def add_card(self, card: CreditCardProduct):
-        CardHolderCard.objects.create(card_holder=self, card=card)
-        return CardHolderCard.objects.get(card_holder=self, card=card)
-
+        card_holder_card = CardHolderCard.objects.create(card_holder=self, card=card)
+        return card_holder_card
+    
     def remove_card(self, card: CreditCardProduct):
         CardHolderCard.objects.get(card_holder=self, card=card).delete()
     
     def get_cards(self):
         return CardHolderCard.objects.filter(card_holder=self)
     
-
 
 class CardHolderCard(models.Model):
     card_holder_cards_id = models.AutoField(primary_key=True)

@@ -5,7 +5,7 @@ class CardHolderDao(Dao):
     
     def get(self, id: int) -> CardHolder:
         try: 
-            card_holder = CardHolder.objects.get(id=id)
+            card_holder = CardHolder.objects.get(user=id)
             return card_holder
         except CardHolder.DoesNotExist:
             raise Exception(f'Card holder with id {id} was not found')
