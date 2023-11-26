@@ -181,9 +181,8 @@ def get_all_user_cards(request):
 
 
 def _get_cardholder_statement(cardholder_card_id):
-    statements = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id)
-    statements_json = list(statements.values())
-    return JsonResponse(statements_json, safe=False)
+    statements = list(AccountStatementDao().get_cardholder_statements(cardholder_card_id).values())
+    return JsonResponse(statements, safe=False)
 
 
 def _get_last_statement(cardholder_card_id):
@@ -278,16 +277,9 @@ def test_add_website_to_card(request):
 
 
 def test_get_cardholder_statement(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    return _get_cardholder_statement(cardholder_card)
+    return AccountStatementDao().get_cardholder_statements(3)
 
 
 def test_get_last_statement(request):
     cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
     return _get_last_statement(cardholder_card)
-
-
-def test_get_all_user_statements(request):
-    email='joselito@gmail.com'
-    return AccountStatementDao().get_all_user_statements(email)
-

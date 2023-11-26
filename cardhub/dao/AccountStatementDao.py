@@ -59,4 +59,11 @@ class AccountStatementDao(Dao):
             payment_for_no_interest = params.get('pni'),
             card_from_cardholder = params.get('card_from_cardholder')
         )
+    
+
+    def get_cardholder_statements(self, cardholder_card_id: int) -> AccountStatement:
+        cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=cardholder_card_id)
+        statements = list(AccountStatement.objects.filter(card_from_cardholder=cardholder_card).values())
+        statements_as_json = JsonResponse(statements, safe=False)
+        return statements_as_json
 

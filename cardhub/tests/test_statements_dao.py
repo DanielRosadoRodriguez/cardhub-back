@@ -60,6 +60,10 @@ class TestUserDao(TransactionTestCase):
         response = AccountStatementDao().get_all_user_statements(self.test_user.email)
         assert response.status_code == 200
 
+    
+    def test_get_cardholder_statements(self):
+        response = AccountStatementDao().get_cardholder_statements(self.test_cardholder_card.card_holder_cards_id)
+        assert response.status_code == 200
 
 
     def _init_test_values_db(self):
