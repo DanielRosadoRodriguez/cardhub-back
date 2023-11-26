@@ -70,48 +70,30 @@ def add_card_to_user_cardholder(request):
         return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
-
     
-@csrf_exempt
-def remove_card_from_user_cardholder(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            card_holder = CardHolder.objects.get(user=data['email'])
-            card_to_delete = CreditCardProduct.objects.get(card_id=data['card_id'])
-            card_holder.remove_card(card_to_delete)
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-        return HttpResponse("Form submitted successfully!")
-    else:
-        return HttpResponse("Invalid form submission method")
         
-
 @csrf_exempt
-def generate_card_statement(request):  
+def remove_card_from_cardholder(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
-            params = {
-                'date': data['date'],
-                'cut_off_date': data['cut_off_date'],
-                'payment_date': data['payment_date'],
-                'current_debt': data['current_debt'],
-                'pni': data['pni'],
-                'card_from_cardholder': card_from_cardholder
-            }
-            statement = AccountStatementDao().build_card_statement(params)
-            AccountStatementDao().save(statement)
+            cardholder = CardHolderDao().get(data['email'])
+            card = CreditCardProductDao().get(data['card_id'])
+            deleted = cardholder.remove_card(card)
+            return JsonResponse(list(deleted), safe=False)
         except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-        return HttpResponse("Form submitted successfully!")
+            message = f"Error analyzing JSON: {e}"
+            print(message)
+            return JsonResponse([message], safe=False)
+        except CardHolderCard.DoesNotExist:
+            message = f"CardHolderCard not found for the specified email and card_id"
+            return JsonResponse([message], safe=False)
     else:
-        return HttpResponse("Invalid form submission method")
+        return JsonResponse(["Invalid form submission method"], safe=False)
 
 
 @csrf_exempt
-def generate_statement_w_params(request):
+def generate_card_statement(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -149,21 +131,6 @@ def generate_statement_w_params(request):
     
 
 @csrf_exempt
-def create_cardholder_for_user_given_email(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            user = User.objects.get(email=data['email'])
-            card_holder = CardHolder(user=user)
-            CardHolderDao().save(card_holder)
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-        return HttpResponse("Form submitted successfully!")
-    else:
-        return HttpResponse("Invalid form submission method")
-
-
-@csrf_exempt
 def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
     cards_json = list(cards.values())
@@ -174,12 +141,25 @@ def get_all_cards(request):
 def get_all_user_cards(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        cardholder = CardHolder.objects.get(user=data['email'])
-        cards = cardholder.get_cards()
-        cards_data = list(cards.values())
+        user_email = data.get('email', '')
+        try:
+            card_holder = CardHolder.objects.get(user=user_email)
+        except CardHolder.DoesNotExist:
+            return JsonResponse([], safe=False)
+        card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
+        if not card_holder_cards.exists():
+            return JsonResponse([], safe=False)
+        cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
+        cards_data = [
+            {
+                'card_holder_card': model_to_dict(card_holder_card),
+                'card': model_to_dict(card),
+            }
+            for card_holder_card, card in zip(card_holder_cards, cards)
+        ]
         return JsonResponse(cards_data, safe=False)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
 
 @csrf_exempt
@@ -196,20 +176,3 @@ def get_last_statement(request):
     else:
         return HttpResponse("Invalid form submission method")
 
-
-@csrf_exempt
-def remove_card_from_cardholder(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            cardholder = CardHolderDao().get(data['cardholder_id'])
-            card = CreditCardProductDao().get(data['card_id'])
-            cardholder.remove_card(card)
-            return HttpResponse("Card removed successfully")
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-            return HttpResponse("Invalid JSON data")
-        except CardHolderCard.DoesNotExist:
-            return HttpResponse("CardHolderCard not found for the specified cardholder_id")
-    else:
-        return HttpResponse("Invalid form submission method")

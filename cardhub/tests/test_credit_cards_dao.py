@@ -32,6 +32,7 @@ class TestCreditCardProductDao(TransactionTestCase):
         response: CreditCardProduct = self.test_card_dao.get(id=1)
         assert response == expected_response
 
+
     def _are_same_card(self, card1: CreditCardProduct, card2: CreditCardProduct) -> bool:
         return (
             self._have_same_name(card1, card2) and

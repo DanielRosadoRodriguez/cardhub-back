@@ -19,7 +19,8 @@ class AccountStatementDao(Dao):
             card_statement.save()
             return JsonResponse({'status': 'success'})
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': e})
+            message = e.__str__()
+            return JsonResponse({'status': 'error', 'message': message})
 
 
     def update(self, card_statement: AccountStatement, params: dict) -> JsonResponse:
@@ -77,5 +78,6 @@ class AccountStatementDao(Dao):
             return JsonResponse(statement_response, safe=False) 
         except IndexError:
             return JsonResponse({'status': 'error', 'message': 'No statements found for the given cardholder_card_id'}, status=404)
+        
 
     

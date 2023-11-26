@@ -8,7 +8,7 @@ class CreditCardProductDao(Dao):
             card = CreditCardProduct.objects.get(card_id=id)
             return card
         except CreditCardProduct.DoesNotExist:
-            raise Exception(f'Card with id {id} was not found')
+            raise Exception(f"Card with id {id} was not found")
         
     
     def get_all(self) -> list[CreditCardProduct]:
