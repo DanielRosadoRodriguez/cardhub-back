@@ -99,7 +99,6 @@ class TestUserDao(TransactionTestCase):
         self.test_cardholder_card.save()
 
         self.test_statement = AccountStatement(
-            statement_id=1,
             date='2021-05-01',
             cut_off_date='2021-05-15',
             payment_date='2021-05-30',
@@ -107,3 +106,5 @@ class TestUserDao(TransactionTestCase):
             payment_for_no_interest=5000.00,
             card_from_cardholder=self.test_cardholder_card
         )
+
+        self.test_statement.save()

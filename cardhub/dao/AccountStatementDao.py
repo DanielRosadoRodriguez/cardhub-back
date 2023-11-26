@@ -70,7 +70,11 @@ class AccountStatementDao(Dao):
 
 
     def get_last_card_statement(self, cardholder_card_id: int) -> AccountStatement:
-        statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
-        statement_dict = model_to_dict(statement)
-        return JsonResponse(statement_dict, safe=False) 
+        try: 
+            statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
+            statement_dict = model_to_dict(statement)
+            return JsonResponse(statement_dict, safe=False) 
+        except IndexError:
+            return JsonResponse({'status': 'error', 'message': 'No statements found for the given cardholder_card_id'}, status=404)
+
     

@@ -142,6 +142,7 @@ def create_cardholder_for_user_given_email(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+
 @csrf_exempt
 def get_all_cards(request):
     cards = CreditCardProduct.objects.all()
@@ -219,7 +220,6 @@ def _addCardToCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card.save()
     print("el id de la card es: " , card_holder_card.card_holder_cards_id)
     return card_holder_card.card_holder_cards_id
-
 
 
 def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
