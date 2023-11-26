@@ -25,7 +25,8 @@ class CardHolder(models.Model):
         return card_holder_card
     
     def remove_card(self, card: CreditCardProduct):
-        CardHolderCard.objects.get(card_holder=self, card=card).delete()
+        deleted_cardholder_card = CardHolderCard.objects.get(card_holder=self, card=card).delete()
+        return deleted_cardholder_card
     
     def get_cards(self):
         return CardHolderCard.objects.filter(card_holder=self)
