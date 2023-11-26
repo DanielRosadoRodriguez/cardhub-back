@@ -180,6 +180,23 @@ def get_all_user_cards(request):
         return HttpResponse("Invalid form submission method")
 
 
+@csrf_exempt
+def get_last_statement(request):
+    if request.method == 'POST':
+        try: 
+            data = json.loads(request.body)
+            cardholder_card_id = data['cardholder_card_id']
+            statement = AccountStatement.objects.filter(card_from_cardholder_id=cardholder_card_id).order_by('-statement_id')[0]
+            statement_dict = model_to_dict(statement)
+            response = list([statement_dict])
+            return JsonResponse(response, safe=False)
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+            return HttpResponse("Invalid JSON data")
+    else:
+        return HttpResponse("Invalid form submission method")
+
+
 def _get_cardholder_statement(cardholder_card_id):
     statements = list(AccountStatementDao().get_cardholder_statements(cardholder_card_id).values())
     return JsonResponse(statements, safe=False)
