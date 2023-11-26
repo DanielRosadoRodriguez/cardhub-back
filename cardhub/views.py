@@ -186,10 +186,7 @@ def get_last_statement(request):
         try: 
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
-            statement = AccountStatement.objects.filter(card_from_cardholder_id=cardholder_card_id).order_by('-statement_id')[0]
-            statement_dict = model_to_dict(statement)
-            response = list([statement_dict])
-            return JsonResponse(response, safe=False)
+            return AccountStatementDao().get_cardholder_statements(cardholder_card_id)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
             return HttpResponse("Invalid JSON data")
