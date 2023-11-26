@@ -1,7 +1,10 @@
 import json
 
+from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
 from .dao.UserDao import UserDao
+from .dao.CreditCardProductDao import CreditCardProductDao
+from .dao.CardWebPageDao import CardWebpageDao
 
 from django.forms import model_to_dict
 
@@ -24,7 +27,8 @@ def signup(request):
             data = json.loads(request.body)
             newUser: User = UserDao().build_user(data)
             UserDao().save(newUser)
-            _createCardHolderForUser(newUser)
+            card_holder = CardHolder(user=newUser)
+            CardHolderDao().save(card_holder)
             response_data = {"signed": True}
             return JsonResponse([str(response_data["signed"])], safe=False)
         except json.JSONDecodeError as e:
@@ -59,10 +63,10 @@ def add_card_to_user_cardholder(request):
             data = json.loads(request.body)
             card_holder = CardHolder.objects.get(user=data['email'])
             card = CreditCardProduct.objects.get(card_id=data['card_id'])
-            cardholder_card_id = _addCardToCardHolder(card_holder, card)
+            card_holder_card = card_holder.add_card(card)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
-        response = list([{"email": data["email"], "cardholder_card_id": cardholder_card_id}])
+        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.id}])
         return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
@@ -75,7 +79,7 @@ def remove_card_from_user_cardholder(request):
             data = json.loads(request.body)
             card_holder = CardHolder.objects.get(user=data['email'])
             card_to_delete = CreditCardProduct.objects.get(card_id=data['card_id'])
-            _removeCardFromCardHolder(card_holder, card_to_delete)
+            card_holder.remove_card(card_to_delete)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -150,7 +154,8 @@ def create_cardholder_for_user_given_email(request):
         try:
             data = json.loads(request.body)
             user = User.objects.get(email=data['email'])
-            _createCardHolderForUser(user)
+            card_holder = CardHolder(user=user)
+            CardHolderDao().save(card_holder)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -169,28 +174,9 @@ def get_all_cards(request):
 def get_all_user_cards(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        user_email = data.get('email', '')
-        
-        try:
-            card_holder = CardHolder.objects.get(user=user_email)
-        except CardHolder.DoesNotExist:
-            return JsonResponse([], safe=False)
-
-        card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-        
-        if not card_holder_cards.exists():
-            return JsonResponse([], safe=False)
-
-        cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
-
-        cards_data = [
-            {
-                'card_holder_card': model_to_dict(card_holder_card),
-                'card': model_to_dict(card),
-            }
-            for card_holder_card, card in zip(card_holder_cards, cards)
-        ]
-
+        cardholder = CardHolder.objects.get(user=data['email'])
+        cards = cardholder.get_cards()
+        cards_data = list(cards.values())
         return JsonResponse(cards_data, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
@@ -210,14 +196,15 @@ def get_last_statement(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+
 @csrf_exempt
 def remove_card_from_cardholder(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            cardholder_id = data['cardholder_card_id']
-            card_holder_card = CardHolderCard.objects.get(card_holder_cards_id=cardholder_id)
-            card_holder_card.delete()
+            cardholder = CardHolderDao().get(data['cardholder_id'])
+            card = CreditCardProductDao().get(data['card_id'])
+            cardholder.remove_card(card)
             return HttpResponse("Card removed successfully")
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
@@ -226,68 +213,3 @@ def remove_card_from_cardholder(request):
             return HttpResponse("CardHolderCard not found for the specified cardholder_id")
     else:
         return HttpResponse("Invalid form submission method")
-
-def _createCreditCardProduct(data):
-    card_name = data['card_name']
-    bank_name = data['bank_name']
-    interest_rate = data['interest_rate']
-    annuity = data['annuity']
-    newCreditCardProduct = CreditCardProduct(card_name=card_name, bank_name=bank_name, interest_rate=interest_rate, annuity=annuity)
-    return newCreditCardProduct
-
-
-def _saveCreditCardProduct(newCreditCardProduct):
-    newCreditCardProduct.save()
-    
-    
-def _createCardHolderForUser(user: User) -> CardHolder:
-    card_holder = CardHolder(user=user)
-    card_holder.save()
-    return card_holder
-
-
-def _addCardToCardHolder(card_holder: CardHolder, card: CreditCardProduct):
-    card_holder_card = CardHolderCard(card_holder=card_holder, card=card)
-    card_holder_card.save()
-    print("el id de la card es: " , card_holder_card.card_holder_cards_id)
-    return card_holder_card.card_holder_cards_id
-
-
-
-
-def _add_website_to_card(card: CreditCardProduct, website_url: str, website_content: str):
-    card_website = CardWebPage(page_url=website_url, page_content=website_content, associated_cards=card)
-    card_website.save()
-
-
-def test_create_cardholder(request):
-    user = UserDao().build_user({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
-    UserDao().save(user)
-    _createCardHolderForUser(user)
-    return HttpResponse("Cardholder created successfully!")
-
-
-def test_create_card(request):
-    card = _createCreditCardProduct({'card_name': 'MasterCard', 'bank_name': 'Banamex', 'interest_rate': 10, 'annuity': 500})
-    _saveCreditCardProduct(card)
-    return HttpResponse("Card created successfully!")
-
-
-def test_add_card_to_cardholder(request):
-    card_holder = CardHolder.objects.get(user='joselito@gmail.com')
-    card = CreditCardProduct.objects.get(card_id=1)
-    _addCardToCardHolder(card_holder, card)
-    return HttpResponse("Cardholder card added successfully!")
-
-
-def test_remove_card_from_cardholder(request):
-    card_holder = CardHolder.objects.get(user='joselito@gmail.com')
-    card = CreditCardProduct.objects.get(card_id=1)
-    _removeCardFromCardHolder(card_holder, card)
-    return HttpResponse("Cardholder card deleted successfully!")
-    
-
-def test_add_website_to_card(request):
-    card = CreditCardProduct.objects.get(card_id=1)
-    _add_website_to_card(card, 'https://www.bancochile.cl', 'Banco de Chile')
-    return HttpResponse("Website added to card successfully!")
