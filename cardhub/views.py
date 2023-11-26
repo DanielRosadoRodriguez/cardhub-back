@@ -186,21 +186,14 @@ def get_last_statement(request):
         try: 
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
-            statement = AccountStatement.objects.filter(card_from_cardholder_id=cardholder_card_id).order_by('-statement_id')[0]
-            statement_dict = model_to_dict(statement)
-            response = list([statement_dict])
-            return JsonResponse(response, safe=False)
+            statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
+            return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
             return HttpResponse("Invalid JSON data")
     else:
         return HttpResponse("Invalid form submission method")
 
-def _get_last_statement(cardholder_card_id):
-    statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
-    statement_dict = model_to_dict(statement)
-    return JsonResponse(statement_dict, safe=False)
-    
 
 def _createCreditCardProduct(data):
     card_name = data['card_name']
@@ -266,31 +259,7 @@ def test_remove_card_from_cardholder(request):
     return HttpResponse("Cardholder card deleted successfully!")
     
 
-def test_generate_card_statement(request):
-    card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': None,
-        'cut_off_date': None,
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None,
-        'card_from_cardholder': card_from_cardholder
-    }
-    statement = AccountStatementDao().build_card_statement(params)
-    AccountStatementDao().save(statement)
-    return HttpResponse("Card statement generated successfully!")
-
-
 def test_add_website_to_card(request):
     card = CreditCardProduct.objects.get(card_id=1)
     _add_website_to_card(card, 'https://www.bancochile.cl', 'Banco de Chile')
     return HttpResponse("Website added to card successfully!")
-
-
-def test_get_cardholder_statement(request):
-    return AccountStatementDao().get_cardholder_statements(3)
-
-
-def test_get_last_statement(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    return _get_last_statement(cardholder_card)

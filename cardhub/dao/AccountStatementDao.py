@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 from django.http import JsonResponse
 from cardhub.models import AccountStatement, CardHolder, CardHolderCard, User 
 from .Dao import Dao
@@ -67,3 +68,9 @@ class AccountStatementDao(Dao):
         statements_as_json = JsonResponse(statements, safe=False)
         return statements_as_json
 
+
+    def get_last_card_statement(self, cardholder_card_id: int) -> AccountStatement:
+        statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
+        statement_dict = model_to_dict(statement)
+        return JsonResponse(statement_dict, safe=False) 
+    
