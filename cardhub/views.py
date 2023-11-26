@@ -197,6 +197,22 @@ def get_last_statement(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+@csrf_exempt
+def remove_card_from_cardholder(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            cardholder_id = data['cardholder_card_id']
+            card_holder_card = CardHolderCard.objects.get(card_holder_cards_id=cardholder_id)
+            card_holder_card.delete()
+            return HttpResponse("Card removed successfully")
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+            return HttpResponse("Invalid JSON data")
+        except CardHolderCard.DoesNotExist:
+            return HttpResponse("CardHolderCard not found for the specified cardholder_id")
+    else:
+        return HttpResponse("Invalid form submission method")
 
 def _createCreditCardProduct(data):
     card_name = data['card_name']
@@ -224,9 +240,6 @@ def _addCardToCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     return card_holder_card.card_holder_cards_id
 
 
-def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
-    card_holder_card = CardHolderCard.objects.get(card_holder=card_holder, card=card)
-    card_holder_card.delete()
 
 
 def _add_website_to_card(card: CreditCardProduct, website_url: str, website_content: str):
