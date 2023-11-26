@@ -124,7 +124,6 @@ def generate_statement_w_params(request):
             statement = AccountStatementDao().build_card_statement(params)
             AccountStatementDao().save(statement)
 
-            # Construir el diccionario de respuesta
             response_data = {
                 'statement_id': statement.statement_id,
                 'date': statement.date,
