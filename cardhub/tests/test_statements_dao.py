@@ -1,3 +1,5 @@
+import json
+from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.test import TransactionTestCase
 from cardhub.dao.AccountStatementDao import AccountStatementDao
@@ -52,6 +54,12 @@ class TestUserDao(TransactionTestCase):
         statement = AccountStatementDao().build_card_statement(params)
         response = AccountStatementDao().save(statement)
         assert response.content == self.expected_response.content
+    
+    
+    def test_get_all_user_statements(self):
+        response = AccountStatementDao().get_all_user_statements(self.test_user.email)
+        assert response.status_code == 200
+
 
 
     def _init_test_values_db(self):
@@ -75,7 +83,18 @@ class TestUserDao(TransactionTestCase):
             card_holder=self.test_cardholder,
             card=self.test_card
         )
+
         self.test_user.save()
         self.test_card.save()
         self.test_cardholder.save()
         self.test_cardholder_card.save()
+
+        self.test_statement = AccountStatement(
+            statement_id=1,
+            date='2021-05-01',
+            cut_off_date='2021-05-15',
+            payment_date='2021-05-30',
+            current_debt=10000.00,
+            payment_for_no_interest=5000.00,
+            card_from_cardholder=self.test_cardholder_card
+        )

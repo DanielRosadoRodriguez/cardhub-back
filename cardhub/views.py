@@ -229,13 +229,6 @@ def _add_website_to_card(card: CreditCardProduct, website_url: str, website_cont
     card_website.save()
 
 
-def _get_all_user_statements(user: User):
-    card_holder = CardHolder.objects.get(user=user)
-    card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-    statements = AccountStatement.objects.filter(card_from_cardholder__in=card_holder_cards)
-    return statements
-
-
 def test_create_cardholder(request):
     user = UserDao().build_user({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
     UserDao().save(user)
@@ -295,6 +288,6 @@ def test_get_last_statement(request):
 
 
 def test_get_all_user_statements(request):
-    user = User.objects.get(email='joselito@gmail.com')
-    return JsonResponse(list(_get_all_user_statements(user).values()), safe=False)
+    email='joselito@gmail.com'
+    return AccountStatementDao().get_all_user_statements(email)
 
