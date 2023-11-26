@@ -1,5 +1,8 @@
 import json
 
+from .dao.AccountStatementDao import AccountStatementDao
+from .dao.UserDao import UserDao
+
 from django.forms import model_to_dict
 
 from cardhub.domain.Authenticator import Authenticator
@@ -19,22 +22,15 @@ def signup(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            newUser = _createUser(data)
-            is_signed_up = _saveUser(newUser)
-            if is_signed_up:
-                _createCardHolderForUser(newUser)
-                response_data = {"signed": True}
-            else:
-                print("Error during signing")
-                response_data = {"signed": False}
-
+            newUser: User = UserDao().build_user(data)
+            UserDao().save(newUser)
+            _createCardHolderForUser(newUser)
+            response_data = {"signed": True}
             return JsonResponse([str(response_data["signed"])], safe=False)
         except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
             return JsonResponse(["False"], safe=False)
     else:
         return HttpResponse("Invalid form submission method")
-
     
 
 @csrf_exempt
@@ -48,9 +44,7 @@ def login(request):
             is_authenticated = authenticator.authenticate_user()
             response_data = {"authenticated": str(is_authenticated)}  # Convierte a cadena para JSON
             response_data_json = list(response_data.values())
-            print(is_authenticated)
             return JsonResponse(response_data_json, safe=False)
-            
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)  
         return HttpResponse(is_authenticated)
@@ -72,7 +66,7 @@ def add_card_to_user_cardholder(request):
         return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
-    
+
     
 @csrf_exempt
 def remove_card_from_user_cardholder(request):
@@ -95,7 +89,16 @@ def generate_card_statement(request):
         try:
             data = json.loads(request.body)
             card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
-            _generate_card_statement(card_from_cardholder)
+            params = {
+                'date': data['date'],
+                'cut_off_date': data['cut_off_date'],
+                'payment_date': data['payment_date'],
+                'current_debt': data['current_debt'],
+                'pni': data['pni'],
+                'card_from_cardholder': card_from_cardholder
+            }
+            statement = AccountStatementDao().build_card_statement(params)
+            AccountStatementDao().save(statement)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -116,9 +119,11 @@ def generate_statement_w_params(request):
                 'cut_off_date': data['cut_off_date'],
                 'payment_date': data['payment_date'],
                 'current_debt': data['current_debt'],
-                'pni': data['pni']
+                'pni': data['pni'],
+                'card_from_cardholder': card_from_cardholder
             }
-            _generate_card_statement_w_params(card_from_cardholder, params)
+            statement = AccountStatementDao().build_card_statement(params)
+            AccountStatementDao().save(statement)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
         return HttpResponse("Form submitted successfully!")
@@ -138,6 +143,7 @@ def create_cardholder_for_user_given_email(request):
         return HttpResponse("Form submitted successfully!")
     else:
         return HttpResponse("Invalid form submission method")
+
 
 @csrf_exempt
 def get_all_cards(request):
@@ -177,33 +183,19 @@ def get_all_user_cards(request):
         return HttpResponse("Invalid form submission method")
 
 
-def _get_cardholder_statement(cardholder_card_id):
-    statements = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id)
-    statements_json = list(statements.values())
-    return JsonResponse(statements_json, safe=False)
-
-
-def _get_last_statement(cardholder_card_id):
-    statement = AccountStatement.objects.filter(card_from_cardholder=cardholder_card_id).order_by('-statement_id')[0]
-    statement_dict = model_to_dict(statement)
-    return JsonResponse(statement_dict, safe=False)
-    
-
-def _createUser(data):
-    name = data['name']
-    email = data['email']
-    password = data['password']
-    newUser = User(name=name, email=email, password=password)
-    return newUser
-
-
-def _saveUser(newUser):
-    try:
-        newUser.save()
-        return True
-    except Exception as e:
-        print(f"Error saving user: {e}")
-        return False
+@csrf_exempt
+def get_last_statement(request):
+    if request.method == 'POST':
+        try: 
+            data = json.loads(request.body)
+            cardholder_card_id = data['cardholder_card_id']
+            statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
+            return statement
+        except json.JSONDecodeError as e:
+            print("Error analyzing JSON: ", e)
+            return HttpResponse("Invalid JSON data")
+    else:
+        return HttpResponse("Invalid form submission method")
 
 
 def _createCreditCardProduct(data):
@@ -236,39 +228,15 @@ def _removeCardFromCardHolder(card_holder: CardHolder, card: CreditCardProduct):
     card_holder_card = CardHolderCard.objects.get(card_holder=card_holder, card=card)
     card_holder_card.delete()
 
-    
-def _generate_card_statement(card: CardHolderCard):
-    statement = AccountStatement(card_from_cardholder=card)
-    statement.save()
-
-
-def _generate_card_statement_w_params(card: CardHolderCard, params: dict):
-    statement = AccountStatement(
-        date=params['date'],
-        cut_off_date=params['cut_off_date'],
-        payment_date=params['payment_date'],
-        current_debt=params['current_debt'],
-        payment_for_no_interest=params['pni'],
-        card_from_cardholder=card
-    )
-    statement.save()
-
 
 def _add_website_to_card(card: CreditCardProduct, website_url: str, website_content: str):
     card_website = CardWebPage(page_url=website_url, page_content=website_content, associated_cards=card)
     card_website.save()
 
 
-def _get_all_user_statements(user: User):
-    card_holder = CardHolder.objects.get(user=user)
-    card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-    statements = AccountStatement.objects.filter(card_from_cardholder__in=card_holder_cards)
-    return statements
-
-
 def test_create_cardholder(request):
-    user = _createUser({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
-    _saveUser(user)
+    user = UserDao().build_user({'name': 'joselito', 'email': 'joselito@gmail.com', 'password': '123456'})
+    UserDao().save(user)
     _createCardHolderForUser(user)
     return HttpResponse("Cardholder created successfully!")
 
@@ -293,76 +261,7 @@ def test_remove_card_from_cardholder(request):
     return HttpResponse("Cardholder card deleted successfully!")
     
 
-def test_generate_card_statement(request):
-    card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=3)
-    data = {
-        'date': None,
-        'cut_off_date': None,
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None
-    }
-    _generate_card_statement_w_params(card_from_cardholder,data)
-    return HttpResponse("Card statement generated successfully!")
-
-
 def test_add_website_to_card(request):
     card = CreditCardProduct.objects.get(card_id=1)
     _add_website_to_card(card, 'https://www.bancochile.cl', 'Banco de Chile')
     return HttpResponse("Website added to card successfully!")
-
-
-def test_get_cardholder_statement(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    return _get_cardholder_statement(cardholder_card)
-
-
-def test_get_last_statement(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    return _get_last_statement(cardholder_card)
-
-
-def test_get_stetement_w_all_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': '2021-05-01',
-        'cut_off_date': '2021-05-15',
-        'payment_date': '2021-05-30',
-        'current_debt': 10000.00,
-        'pni': 5000.00
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
-def test_create_statement_w_some_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': '2021-05-01',
-        'cut_off_date': '2021-05-15',
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
-def test_create_statement_without_params(request):
-    cardholder_card = CardHolderCard.objects.get(card_holder_cards_id=3)
-    params = {
-        'date': None,
-        'cut_off_date': None,
-        'payment_date': None,
-        'current_debt': None,
-        'pni': None
-    }
-    _generate_card_statement_w_params(cardholder_card, params)
-    return HttpResponse("Card statement generated successfully!")
-
-
-def test_get_all_user_statements(request):
-    print("TEST")
-    user = User.objects.get(email='joselito@gmail.com')
-    return JsonResponse(list(_get_all_user_statements(user).values()), safe=False)
-

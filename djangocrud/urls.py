@@ -32,13 +32,7 @@ urlpatterns = [
     path('generate_card_statement/', views.generate_statement_w_params, name='test_generate_card_statement'),
     path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
     path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),
-    path('test_get_cardholder_statement/', views.test_get_cardholder_statement, name='test_get_cardholder_statement'),
     path('get_all_user_cards/', views.get_all_user_cards, name='test_get_all_user_cards'),
-    path('test_get_last_statement/', views.test_get_last_statement, name='test_get_last_statement'),
     path('create_cardholder_for_user_given_email/', views.create_cardholder_for_user_given_email, name='create_cardholder_for_user_given_email'),
-    path('test_get_stetement_w_all_params/', views.test_get_stetement_w_all_params, name='test_get_stetement_w_all_params'),
-    path('test_get_all_user_statements/', views.test_get_all_user_statements, name='test_get_all_user_statements'),
-    path('test_create_statement_w_some_params/', views.test_create_statement_w_some_params, name='test_create_statement_w_some_params'),
-    path('test_create_statement_without_params/', views.test_create_statement_without_params, name='test_create_statement_without_params'),
-
+    path('get_last_statement/', views.get_last_statement, name='test_get_last_statement'),
 ]
