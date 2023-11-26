@@ -29,6 +29,7 @@ urlpatterns = [
     path('get_all_cards/', views.get_all_cards, name='get_all_cards'),
     path('test_remove_card_from_cardholder/', views.test_remove_card_from_cardholder, name='test_remove_card_from_cardholder'),
     path('remove_card_from_user_cardholder/', views.remove_card_from_cardholder, name='remove_card_from_user_cardholder'),
+    path('get_user_account_statement_history_from_card/', views.get_user_account_statement_history_from_card, name='get_all_user_account_statements'),
     path('generate_card_statement/', views.generate_statement_w_params, name='test_generate_card_statement'),
     path('generate_card_statement/', views.generate_card_statement, name='generate_card_statement'),
     path('test_add_website_to_card/', views.test_add_website_to_card, name='test_add_website_to_card'),

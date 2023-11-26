@@ -195,6 +195,20 @@ def get_all_user_cards(request):
     else:
         return HttpResponse("Invalid form submission method")
 
+@csrf_exempt
+def get_user_account_statement_history_from_card(request):
+    if request.method == 'POST':       
+        try:
+            data = json.loads(request.body)
+            cardholder_card_id = data.get('user_credit_card', '')
+            user_card_statements = AccountStatementDao().get_cardholder_statements(cardholder_card_id)
+            return user_card_statements
+
+        except CardHolder.DoesNotExist:
+            return JsonResponse([], safe=False)
+    else:
+        return HttpResponse("Invalid form submission method")
+
 
 @csrf_exempt
 def get_last_statement(request):
@@ -202,7 +216,7 @@ def get_last_statement(request):
         try: 
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
-            statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
+            statement = AccountStatementDao().get_all()
             return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
