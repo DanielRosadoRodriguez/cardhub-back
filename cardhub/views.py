@@ -1,6 +1,7 @@
 import json
 
 from .app_views.ViewLogin import ViewLogin
+from .app_views.ViewGetAllCards import ViewGetAllCards
 
 from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
@@ -118,11 +119,10 @@ def generate_card_statement(request):
 
 @csrf_exempt
 def get_all_cards(request):
-    cards = CreditCardProductDao().get_all()
-    cards_json = list(cards.values())
-    return JsonResponse(cards_json, safe=False)
+    return ViewGetAllCards().render()
 
 
+from .app_views.ViewGetAllCards import ViewGetAllCards
 # TODO - Pasar a DAO
 @csrf_exempt
 def get_all_user_cards(request):

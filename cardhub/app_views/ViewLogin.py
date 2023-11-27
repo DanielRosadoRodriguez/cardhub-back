@@ -1,4 +1,3 @@
-
 import json
 from cardhub.domain.Authenticator import Authenticator
 from django.http import JsonResponse
