@@ -91,6 +91,7 @@ def remove_card_from_cardholder(request):
         return JsonResponse(["Invalid form submission method"], safe=False)
 
 
+# TODO - Pasar a DAO
 @csrf_exempt
 def generate_card_statement(request):
     if request.method == 'POST':
@@ -131,11 +132,12 @@ def generate_card_statement(request):
 
 @csrf_exempt
 def get_all_cards(request):
-    cards = CreditCardProduct.objects.all()
+    cards = CreditCardProductDao().get_all()
     cards_json = list(cards.values())
     return JsonResponse(cards_json, safe=False)
 
 
+# TODO - Pasar a DAO
 @csrf_exempt
 def get_all_user_cards(request):
     if request.method == 'POST':
@@ -158,7 +160,7 @@ def get_all_user_cards(request):
         ]
         return JsonResponse(cards_data, safe=False)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
 
 @csrf_exempt
@@ -168,7 +170,6 @@ def get_last_statement(request):
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
             statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
-            print(statement)
             return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
@@ -184,7 +185,6 @@ def get_all_statement_from_card(request):
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
             statement = AccountStatementDao().get_cardholder_statements(cardholder_card_id)
-            print(statement)
             return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
