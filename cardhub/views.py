@@ -1,5 +1,7 @@
 import json
 
+from cardhub.viewssdfs.ViewLogin import ViewLogin
+
 from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
 from .dao.UserDao import UserDao
@@ -35,22 +37,7 @@ def signup(request):
 
 @csrf_exempt
 def login(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            email = data['email']
-            password = data['password']
-            authenticator = Authenticator(email, password)
-            is_authenticated = authenticator.authenticate_user()
-            response_data = {"authenticated": str(is_authenticated)}  # Convierte a cadena para JSON
-            response_data_json = list(response_data.values())
-            return JsonResponse(response_data_json, safe=False)
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)  
-        return HttpResponse(is_authenticated)
-    else:
-        return HttpResponse("Invalid form submission method")
-
+    return ViewLogin(request).render()
 
 @csrf_exempt
 def add_card_to_user_cardholder(request):
