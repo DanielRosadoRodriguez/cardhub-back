@@ -1,6 +1,6 @@
 import json
 
-from cardhub.viewssdfs.ViewLogin import ViewLogin
+from .viewssdfs.ViewLogin import ViewLogin
 
 from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
@@ -9,7 +9,6 @@ from .dao.CreditCardProductDao import CreditCardProductDao
 
 from django.forms import model_to_dict
 
-from .domain.Authenticator import Authenticator
 from .models import User
 from .models import CardHolderCard
 from .models import CardHolder
