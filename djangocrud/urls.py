@@ -29,4 +29,5 @@ urlpatterns = [
     path('get_all_cards/', views.get_all_cards, name='get_all_cards'),
     path('get_all_user_cards/', views.get_all_user_cards, name='get_all_user_cards'),
     path('get_last_statement/', views.get_last_statement, name='get_last_statement'),
+    path('get_all_statements_from_card/', views.get_all_statement_from_card, name='get_all_statement')
 ]
