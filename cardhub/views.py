@@ -1,6 +1,6 @@
 import json
 
-from .viewssdfs.ViewLogin import ViewLogin
+from .app_views.ViewLogin import ViewLogin
 
 from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
