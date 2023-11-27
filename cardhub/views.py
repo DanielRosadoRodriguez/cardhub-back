@@ -14,6 +14,7 @@ from .models import User
 from .models import CardHolderCard
 from .models import CardHolder
 from .models import CreditCardProduct
+
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -122,7 +123,6 @@ def get_all_cards(request):
     return ViewGetAllCards().render()
 
 
-from .app_views.ViewGetAllCards import ViewGetAllCards
 # TODO - Pasar a DAO
 @csrf_exempt
 def get_all_user_cards(request):
