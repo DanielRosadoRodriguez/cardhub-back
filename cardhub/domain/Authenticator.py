@@ -8,6 +8,7 @@ class Authenticator:
         self.email = email
         self.password = password
         self.dao_users = UserDao()
+        
 
 
     def authenticate_user(self) -> bool:
