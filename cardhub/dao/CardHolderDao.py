@@ -3,9 +3,9 @@ from cardhub.models import CardHolder
 
 class CardHolderDao(Dao):
     
-    def get(self, id: int) -> CardHolder:
+    def get(self, email: str) -> CardHolder:
         try: 
-            card_holder = CardHolder.objects.get(user=id)
+            card_holder = CardHolder.objects.get(user=email)
             return card_holder
         except CardHolder.DoesNotExist:
             raise Exception(f'Card holder with id {id} was not found')
@@ -22,7 +22,7 @@ class CardHolderDao(Dao):
             card_holder.save()
             return card_holder
         except Exception as e:
-            raise Exception(f'Error saving card holder with id {card_holder.id}: {e}')
+            raise Exception(f'Error saving card holder with id {card_holder.card_holder_id}: {e}')
     
     def update(self, card_holder: CardHolder, data: dict) -> CardHolder:
         try:
