@@ -4,18 +4,14 @@ from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
 from .dao.UserDao import UserDao
 from .dao.CreditCardProductDao import CreditCardProductDao
-from .dao.CardWebPageDao import CardWebpageDao
 
 from django.forms import model_to_dict
 
-from cardhub.domain.Authenticator import Authenticator
-from django.core.serializers import serialize
-from .models import CardWebPage, User
+from .domain.Authenticator import Authenticator
+from .models import User
 from .models import CardHolderCard
 from .models import CardHolder
 from .models import CreditCardProduct
-from .models import AccountStatement
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
