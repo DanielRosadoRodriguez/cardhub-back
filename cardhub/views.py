@@ -144,12 +144,25 @@ def get_all_cards(request):
 def get_all_user_cards(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        cardholder = CardHolder.objects.get(user=data['email'])
-        cards = cardholder.get_cards()
-        cards_data = list(cards.values())
+        user_email = data.get('email', '')
+        try:
+            card_holder = CardHolder.objects.get(user=user_email)
+        except CardHolder.DoesNotExist:
+            return JsonResponse([], safe=False)
+        card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
+        if not card_holder_cards.exists():
+            return JsonResponse([], safe=False)
+        cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
+        cards_data = [
+            {
+                'card_holder_card': model_to_dict(card_holder_card),
+                'card': model_to_dict(card),
+            }
+            for card_holder_card, card in zip(card_holder_cards, cards)
+        ]
         return JsonResponse(cards_data, safe=False)
     else:
-        return HttpResponse("Invalid form submission method")
+        return HttpResponse("Invalid form submission method")
 
 
 @csrf_exempt
