@@ -182,11 +182,10 @@ def get_last_statement(request):
         try: 
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
-            statement = AccountStatementDao().get_all()
+            statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
             return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
             return HttpResponse("Invalid JSON data")
     else:
         return HttpResponse("Invalid form submission method")
-
