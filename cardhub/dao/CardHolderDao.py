@@ -40,3 +40,5 @@ class CardHolderDao(Dao):
         except Exception as e:
             raise Exception(f'Error deleting card holder with id {card_holder.id}: {e}')
         
+
+    #def remove_card_from_cardholder(self, cardholder_card_id: )

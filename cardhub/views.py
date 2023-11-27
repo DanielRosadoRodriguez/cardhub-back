@@ -64,9 +64,10 @@ def add_card_to_user_cardholder(request):
             card_holder = CardHolderDao().get(data['email']) 
             card = CreditCardProductDao().get(data['card_id'])
             card_holder_card = card_holder.add_card(card)
+            print(card_holder_card.card_holder_cards_id)
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)
-        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.card_id}])
+        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.card_holder_cards_id}])
         return JsonResponse(response, safe=False)
     else:
         return HttpResponse("Invalid form submission method")
@@ -76,9 +77,11 @@ def add_card_to_user_cardholder(request):
 def remove_card_from_cardholder(request):
     if request.method == 'POST':
         try:
+            
             data = json.loads(request.body)
             cardholder = CardHolderDao().get(data['email'])
             card = CreditCardProductDao().get(data['card_id'])
+            
             deleted = cardholder.remove_card(card)
             return JsonResponse(list(deleted), safe=False)
         except json.JSONDecodeError as e:
@@ -183,6 +186,7 @@ def get_last_statement(request):
             data = json.loads(request.body)
             cardholder_card_id = data['cardholder_card_id']
             statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
+            print(statement)
             return statement
         except json.JSONDecodeError as e:
             print("Error analyzing JSON: ", e)

@@ -16,6 +16,7 @@ class CreditCardProduct(models.Model):
     annuity = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     
     
+    
 class CardHolder(models.Model):
     card_holder_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
