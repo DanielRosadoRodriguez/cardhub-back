@@ -1,5 +1,7 @@
 import json
 
+from .app_views import ViewSignUp
+
 from .app_views.ViewLogin import ViewLogin
 from .app_views.ViewGetAllCards import ViewGetAllCards
 
@@ -21,19 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def signup(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            newUser: User = UserDao().build_user(data)
-            UserDao().save(newUser)
-            card_holder = CardHolder(user=newUser)
-            CardHolderDao().save(card_holder)
-            response_data = {"signed": True}
-            return JsonResponse([str(response_data["signed"])], safe=False)
-        except json.JSONDecodeError as e:
-            return JsonResponse(["False"], safe=False)
-    else:
-        return HttpResponse("Invalid form submission method")
+    return ViewSignUp(request).render()
     
 
 @csrf_exempt
