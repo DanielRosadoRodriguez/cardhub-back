@@ -12,7 +12,6 @@ class ViewModifyStatement():
     def __init__(self, request):
         self.request = request
         self.data = json.loads(request.body)
-        self.cardholder_card_id = self.data['cardholder_card_id']
         self.statement_id = self.data['statement_id']
         self.params = self._build_params()
 
