@@ -1,12 +1,12 @@
 import json
 
-from ..dao import AccountStatementDao
+from ..dao.AccountStatementDao import AccountStatementDao
 from ..models import CardHolderCard
 
 from django.http import JsonResponse
 
 
-class GetAllUserCards():
+class ViewGenerateCardStatement():
         
     def __init__(self, request):
         self.request = request
@@ -16,8 +16,8 @@ class GetAllUserCards():
 
 
     def render(self):
-        if self.is_post_method(self):
-            return self.build_response()
+        if self._is_post_method():
+            return self._build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
     

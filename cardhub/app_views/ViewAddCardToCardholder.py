@@ -15,8 +15,8 @@ class ViewAddCardToCardholder():
 
 
     def render(self):
-        if self.is_post_method(self):
-            return self.build_response()
+        if self._is_post_method():
+            return self._build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
     
@@ -29,4 +29,4 @@ class ViewAddCardToCardholder():
         card_holder = CardHolderDao().get(self.email) 
         card = CreditCardProductDao().get(self.card_id)
         card_holder_card = card_holder.add_card(card)
-        return list([{"email": self.email, "cardholder_card_id": card_holder_card.card_holder_cards_id}])
+        return JsonResponse(list([{"email": self.email, "cardholder_card_id": card_holder_card.card_holder_cards_id}]),safe=False)

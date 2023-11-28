@@ -14,8 +14,8 @@ class ViewLogin():
     
     
     def render(self):
-        if self.is_post_method(self):
-            return self.build_response()
+        if self._is_post_method():
+            return self._build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
     

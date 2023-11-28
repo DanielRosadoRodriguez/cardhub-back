@@ -1,7 +1,7 @@
 import json
 
-from cardhub.dao import CardHolderDao
-from cardhub.dao import UserDao
+from cardhub.dao.CardHolderDao import CardHolderDao
+from cardhub.dao.UserDao import UserDao
 from cardhub.models import CardHolder, User
 from django.http import JsonResponse
 
@@ -17,7 +17,7 @@ class ViewSignUp():
     
     def render(self):
         if self._is_post_method():
-            return self.build_response()
+            return self._build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
         

@@ -1,12 +1,14 @@
-from .app_views import ViewGenerateCardStatement
-from .app_views import ViewGetAllUserCards
-from .app_views import ViewRemoveCardFromCardholder
-from .app_views import ViewGetLastStatement
-from .app_views import ViewSignUp
-from .app_views import ViewLogin
-from .app_views import ViewGetAllCards
-from .app_views import ViewAddCardToCardholder
-from .app_views import ViewGetAllStatementsFromCard
+from .app_views.ViewGenerateCardStatement import ViewGenerateCardStatement
+from .app_views.ViewGetAllUserCards import GetAllUserCards
+from .app_views.ViewRemoveCardFromCardholder import RemoveCardFromCardholder
+from .app_views.ViewGetLastStatement import GetLastStatement
+from .app_views.ViewSignUp import ViewSignUp
+from .app_views.ViewLogin import ViewLogin
+from .app_views.ViewGetAllCards import ViewGetAllCards
+from .app_views.ViewAddCardToCardholder import ViewAddCardToCardholder
+from .app_views.ViewGetAllStatementsFromCard import ViewGetAllStatementsFromCard
+
+
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -28,7 +30,7 @@ def add_card_to_user_cardholder(request):
         
 @csrf_exempt
 def remove_card_from_cardholder(request):
-    return ViewRemoveCardFromCardholder(request).render()
+    return RemoveCardFromCardholder(request).render()
 
 
 @csrf_exempt
@@ -43,12 +45,12 @@ def get_all_cards(request):
 
 @csrf_exempt
 def get_all_user_cards(request):
-    return ViewGetAllUserCards(request).render()
+    return GetAllUserCards(request).render()
 
 
 @csrf_exempt
 def get_last_statement(request):
-    return ViewGetLastStatement(request).render()
+    return GetLastStatement(request).render()
 
 
 @csrf_exempt
