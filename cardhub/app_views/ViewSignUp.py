@@ -15,13 +15,17 @@ class ViewSignUp():
     
     
     def render(self):
-        if self.request.method == "POST":
+        if self._is_post_method():
             return self.build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
         
+
+    def _is_post_method(self):
+        return self.request.method == "POST"
             
-    def build_response(self):
+
+    def _build_response(self):
         newUser: User = UserDao().build_user(self.data)
         UserDao().save(newUser)
         card_holder = CardHolder(user=newUser)
