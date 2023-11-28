@@ -1,9 +1,6 @@
-import json
-
 from .app_views import ViewGenerateCardStatement
 from .app_views import ViewGetAllUserCards
 from .app_views import ViewRemoveCardFromCardholder
-
 from .app_views import ViewGetLastStatement
 from .app_views import ViewSignUp
 from .app_views.ViewLogin import ViewLogin
@@ -11,19 +8,6 @@ from .app_views.ViewGetAllCards import ViewGetAllCards
 from .app_views.ViewAddCardToCardholder import ViewAddCardToCardholder
 from .app_views.ViewGetAllStatementsFromCard import ViewGetAllStatementsFromCard
 
-from .dao.CardHolderDao import CardHolderDao
-from .dao.AccountStatementDao import AccountStatementDao
-from .dao.UserDao import UserDao
-from .dao.CreditCardProductDao import CreditCardProductDao
-
-from django.forms import model_to_dict
-
-from .models import User
-from .models import CardHolderCard
-from .models import CardHolder
-from .models import CreditCardProduct
-
-from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
