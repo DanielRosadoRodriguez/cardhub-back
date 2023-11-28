@@ -1,5 +1,6 @@
 import json
 
+from .app_views import ViewGenerateCardStatement
 from .app_views import ViewGetAllUserCards
 from .app_views import ViewRemoveCardFromCardholder
 
@@ -46,44 +47,10 @@ def remove_card_from_cardholder(request):
     return ViewRemoveCardFromCardholder(request).render()
 
 
-# TODO - Pasar a DAO
 @csrf_exempt
 def generate_card_statement(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            print(data['card_holder_cards_id'])
-            card_from_cardholder = CardHolderCard.objects.get(card_holder_cards_id=data['card_holder_cards_id'])
-            params = {
-                'date': data['date'],
-                'cut_off_date': data['cut_off_date'],
-                'payment_date': data['payment_date'],
-                'current_debt': data['current_debt'],
-                'pni': data['pni'],
-                'card_from_cardholder': card_from_cardholder
-            }
-            statement = AccountStatementDao().build_card_statement(params)
-            AccountStatementDao().save(statement)
+    return ViewGenerateCardStatement(request).render()
 
-            response_data = {
-                'statement_id': statement.statement_id,
-                'date': statement.date,
-                'cut_off_date': statement.cut_off_date,
-                'payment_date': statement.payment_date,
-                'current_debt': statement.current_debt,
-                'payment_for_no_interest': statement.payment_for_no_interest,
-                'card_from_cardholder': statement.card_from_cardholder.card_holder_cards_id
-            }
-            response = list([response_data])
-            return JsonResponse(response, safe=False)
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-            return HttpResponse("Invalid JSON data")
-        except CardHolderCard.DoesNotExist:
-            return HttpResponse("CardHolderCard not found for the specified card_holder_cards_id")
-    else:
-        return HttpResponse("Invalid form submission method")
-    
 
 @csrf_exempt
 def get_all_cards(request):

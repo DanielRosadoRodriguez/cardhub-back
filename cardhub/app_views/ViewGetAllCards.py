@@ -1,4 +1,4 @@
-from dao import CreditCardProductDao
+from ..dao import CreditCardProductDao
 from django.http import JsonResponse
 
 
