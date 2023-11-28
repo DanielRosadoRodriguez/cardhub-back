@@ -14,12 +14,16 @@ class ViewLogin():
     
     
     def render(self):
-        if self.request.method == "POST":
+        if self.is_post_method(self):
             return self.build_response()
         else:
             return JsonResponse([self.error_message], safe=False)
     
-    def build_response(self):
+
+    def _is_post_method(self):
+        return self.request.method == "POST"
+    
+    def _build_response(self):
         authenticator = Authenticator(self.email, self.password)
         is_authenticated = authenticator.authenticate_user()
         response_data = {"authenticated": str(is_authenticated)} 
