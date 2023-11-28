@@ -4,6 +4,7 @@ from .app_views import ViewSignUp
 
 from .app_views.ViewLogin import ViewLogin
 from .app_views.ViewGetAllCards import ViewGetAllCards
+from .app_views.ViewAddCardToCardholder import ViewAddCardToCardholder
 
 from .dao.CardHolderDao import CardHolderDao
 from .dao.AccountStatementDao import AccountStatementDao
@@ -33,20 +34,8 @@ def login(request):
 
 @csrf_exempt
 def add_card_to_user_cardholder(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            card_holder = CardHolderDao().get(data['email']) 
-            card = CreditCardProductDao().get(data['card_id'])
-            card_holder_card = card_holder.add_card(card)
-            print(card_holder_card.card_holder_cards_id)
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-        response = list([{"email": data["email"], "cardholder_card_id": card_holder_card.card_holder_cards_id}])
-        return JsonResponse(response, safe=False)
-    else:
-        return HttpResponse("Invalid form submission method")
-    
+    ViewAddCardToCardholder(request).render()
+
         
 @csrf_exempt
 def remove_card_from_cardholder(request):
