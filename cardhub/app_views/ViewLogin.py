@@ -6,11 +6,11 @@ from django.http import JsonResponse
 class ViewLogin():
     
     def __init__(self, request):
-        data = json.loads(request.body)
+        self.data = json.loads(request.body)
         self.request = request
+        self.email = self.data['email']
+        self.password = self.data['password']
         self.error_message = "Invalid form submission method"
-        self.email = data['email']
-        self.password = data['password']
     
     
     def render(self):
