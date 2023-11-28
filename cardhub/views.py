@@ -1,3 +1,4 @@
+from .app_views.ViewModifyStatement import ViewModifyStatement
 from .app_views.ViewGenerateCardStatement import ViewGenerateCardStatement
 from .app_views.ViewGetAllUserCards import GetAllUserCards
 from .app_views.ViewRemoveCardFromCardholder import RemoveCardFromCardholder
@@ -56,3 +57,8 @@ def get_last_statement(request):
 @csrf_exempt
 def get_all_statement_from_card(request):
     return ViewGetAllStatementsFromCard(request).render()
+
+
+@csrf_exempt    
+def modify_statement(request):
+    return ViewModifyStatement(request).render()

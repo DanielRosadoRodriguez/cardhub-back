@@ -25,4 +25,3 @@ class GetLastStatement():
 
     def _build_response(self):
         return AccountStatementDao().get_last_card_statement(self.cardholder_card_id)
-

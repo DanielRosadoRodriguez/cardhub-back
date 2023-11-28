@@ -6,7 +6,7 @@ from .Dao import Dao
 class AccountStatementDao(Dao):
 
     def get(self, id: int) -> AccountStatement:
-        return AccountStatement.objects.get(id=id)
+        return AccountStatement.objects.get(statement_id=id)
 
 
     def get_all(self) -> list[AccountStatement]:
@@ -25,9 +25,15 @@ class AccountStatementDao(Dao):
 
     def update(self, card_statement: AccountStatement, params: dict) -> JsonResponse:
         try:
-            card_statement = self.build_card_statement(params) 
+            card_statement.date = params.get('date')
+            card_statement.cut_off_date = params.get('cut_off_date')
+            card_statement.payment_date = params.get('payment_date')
+            card_statement.current_debt = params.get('current_debt')
+            card_statement.payment_for_no_interest = params.get('pni')
             card_statement.save()
-            return JsonResponse({'status': 'success'})
+            statement_dict = model_to_dict(card_statement)
+            statement_response = list([statement_dict])
+            return JsonResponse(statement_response, safe=False) 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': e})
 
