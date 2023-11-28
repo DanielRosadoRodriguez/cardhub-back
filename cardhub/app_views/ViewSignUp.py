@@ -9,6 +9,7 @@ from django.http import JsonResponse
 class ViewSignUp():
     
     def __init__(self, request):
+        self.request = request
         self.data = json.loads(request.body)
         self.request = request
         self.error_message = "Invalid form submission method"
