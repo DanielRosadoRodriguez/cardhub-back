@@ -1,5 +1,6 @@
 import json
 
+from .app_views import ViewGetAllUserCards
 from .app_views import ViewGetLastStatement
 from .app_views import ViewSignUp
 from .app_views.ViewLogin import ViewLogin
@@ -104,30 +105,9 @@ def get_all_cards(request):
     return ViewGetAllCards().render()
 
 
-# TODO - Pasar a DAO
 @csrf_exempt
 def get_all_user_cards(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user_email = data.get('email', '')
-        try:
-            card_holder = CardHolder.objects.get(user=user_email)
-        except CardHolder.DoesNotExist:
-            return JsonResponse([], safe=False)
-        card_holder_cards = CardHolderCard.objects.filter(card_holder=card_holder)
-        if not card_holder_cards.exists():
-            return JsonResponse([], safe=False)
-        cards = CreditCardProduct.objects.filter(cardholdercard__in=card_holder_cards)
-        cards_data = [
-            {
-                'card_holder_card': model_to_dict(card_holder_card),
-                'card': model_to_dict(card),
-            }
-            for card_holder_card, card in zip(card_holder_cards, cards)
-        ]
-        return JsonResponse(cards_data, safe=False)
-    else:
-        return HttpResponse("Invalid form submission method")
+    return ViewGetAllUserCards(request).render()
 
 
 @csrf_exempt
