@@ -1,6 +1,8 @@
 import json
 
 from .app_views import ViewGetAllUserCards
+from .app_views import ViewRemoveCardFromCardholder
+
 from .app_views import ViewGetLastStatement
 from .app_views import ViewSignUp
 from .app_views.ViewLogin import ViewLogin
@@ -36,29 +38,12 @@ def login(request):
 
 @csrf_exempt
 def add_card_to_user_cardholder(request):
-    ViewAddCardToCardholder(request).render()
+    return ViewAddCardToCardholder(request).render()
 
         
 @csrf_exempt
 def remove_card_from_cardholder(request):
-    if request.method == 'POST':
-        try:
-            
-            data = json.loads(request.body)
-            cardholder = CardHolderDao().get(data['email'])
-            card = CreditCardProductDao().get(data['card_id'])
-            
-            deleted = cardholder.remove_card(card)
-            return JsonResponse(list(deleted), safe=False)
-        except json.JSONDecodeError as e:
-            message = f"Error analyzing JSON: {e}"
-            print(message)
-            return JsonResponse([message], safe=False)
-        except CardHolderCard.DoesNotExist:
-            message = f"CardHolderCard not found for the specified email and card_id"
-            return JsonResponse([message], safe=False)
-    else:
-        return JsonResponse(["Invalid form submission method"], safe=False)
+    return ViewRemoveCardFromCardholder(request).render()
 
 
 # TODO - Pasar a DAO
