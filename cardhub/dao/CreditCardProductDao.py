@@ -1,5 +1,5 @@
-from .Dao import Dao
 from cardhub.models import CreditCardProduct 
+from .InterfaceDao import InterfaceDao as Dao
 
 class CreditCardProductDao(Dao):
 

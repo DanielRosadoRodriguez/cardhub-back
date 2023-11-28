@@ -1,5 +1,5 @@
-from .Dao import Dao
 from cardhub.models import CardHolder 
+from .InterfaceDao import InterfaceDao as Dao
 
 class CardHolderDao(Dao):
     

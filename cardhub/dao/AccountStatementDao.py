@@ -1,7 +1,7 @@
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from cardhub.models import AccountStatement, CardHolder, CardHolderCard, User 
-from .Dao import Dao
+from .InterfaceDao import InterfaceDao as Dao
 
 class AccountStatementDao(Dao):
 

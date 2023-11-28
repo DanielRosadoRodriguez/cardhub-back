@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class Dao(ABC):
+class InterfaceDao(ABC):
     @abstractmethod
     def get():
         pass

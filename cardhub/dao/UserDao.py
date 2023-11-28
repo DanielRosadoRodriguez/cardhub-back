@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from cardhub.models import User
-from .Dao import Dao
+from .InterfaceDao import InterfaceDao as Dao
 
 class UserDao(Dao):
 
