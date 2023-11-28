@@ -23,6 +23,7 @@ class ViewLogin():
     def _is_post_method(self):
         return self.request.method == "POST"
     
+
     def _build_response(self):
         authenticator = Authenticator(self.email, self.password)
         is_authenticated = authenticator.authenticate_user()
