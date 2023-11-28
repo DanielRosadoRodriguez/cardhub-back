@@ -1,7 +1,7 @@
 import json
 
+from .app_views import ViewGetLastStatement
 from .app_views import ViewSignUp
-
 from .app_views.ViewLogin import ViewLogin
 from .app_views.ViewGetAllCards import ViewGetAllCards
 from .app_views.ViewAddCardToCardholder import ViewAddCardToCardholder
@@ -132,17 +132,7 @@ def get_all_user_cards(request):
 
 @csrf_exempt
 def get_last_statement(request):
-    if request.method == 'POST':
-        try: 
-            data = json.loads(request.body)
-            cardholder_card_id = data['cardholder_card_id']
-            statement = AccountStatementDao().get_last_card_statement(cardholder_card_id)
-            return statement
-        except json.JSONDecodeError as e:
-            print("Error analyzing JSON: ", e)
-            return HttpResponse("Invalid JSON data")
-    else:
-        return HttpResponse("Invalid form submission method")
+    return ViewGetLastStatement(request).render()
 
 
 @csrf_exempt
