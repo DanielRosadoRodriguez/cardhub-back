@@ -3,10 +3,10 @@ from .app_views import ViewGetAllUserCards
 from .app_views import ViewRemoveCardFromCardholder
 from .app_views import ViewGetLastStatement
 from .app_views import ViewSignUp
-from .app_views.ViewLogin import ViewLogin
-from .app_views.ViewGetAllCards import ViewGetAllCards
-from .app_views.ViewAddCardToCardholder import ViewAddCardToCardholder
-from .app_views.ViewGetAllStatementsFromCard import ViewGetAllStatementsFromCard
+from .app_views import ViewLogin
+from .app_views import ViewGetAllCards
+from .app_views import ViewAddCardToCardholder
+from .app_views import ViewGetAllStatementsFromCard
 
 from django.views.decorators.csrf import csrf_exempt
 
