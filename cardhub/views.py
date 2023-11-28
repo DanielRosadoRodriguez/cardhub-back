@@ -30,6 +30,7 @@ def signup(request):
 def login(request):
     return ViewLogin(request).render()
 
+
 @csrf_exempt
 def add_card_to_user_cardholder(request):
     if request.method == 'POST':
