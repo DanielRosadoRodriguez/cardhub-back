@@ -26,7 +26,7 @@ def login(request):
 
 @csrf_exempt
 def add_card_to_user_cardholder(request):
-    return ViewAddCardToCardholder(request).render()
+    return ViewAddCardToCardholder(request).generate_json_response()
 
         
 @csrf_exempt
