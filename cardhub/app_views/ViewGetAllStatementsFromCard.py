@@ -12,7 +12,7 @@ class ViewGetAllStatementsFromCard():
         self.cardholder_card_id = self.data['cardholder_card_id']
 
 
-    def render(self):
+    def generate_json_response(self):
         if self._is_post_method():
             return self._build_response()
         else:

@@ -18,7 +18,7 @@ class GetAllUserCards():
         self.email = self.data.get('email', '')
 
 
-    def render(self):
+    def generate_json_response(self):
         if self._is_post_method():
             return self._build_response()
         else:

@@ -15,7 +15,7 @@ class RemoveCardFromCardholder():
         self.email = self.data['email']
 
 
-    def render(self):
+    def generate_json_response(self):
         if self._is_post_method():
             return self._build_response()
         else:

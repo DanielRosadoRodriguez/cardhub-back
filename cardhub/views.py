@@ -16,12 +16,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def signup(request):
-    return ViewSignUp(request).render()
+    return ViewSignUp(request).generate_json_response()
     
 
 @csrf_exempt
 def login(request):
-    return ViewLogin(request).render()
+    return ViewLogin(request).generate_json_response()
 
 
 @csrf_exempt
@@ -31,34 +31,34 @@ def add_card_to_user_cardholder(request):
         
 @csrf_exempt
 def remove_card_from_cardholder(request):
-    return RemoveCardFromCardholder(request).render()
+    return RemoveCardFromCardholder(request).generate_json_response()
 
 
 @csrf_exempt
 def generate_card_statement(request):
-    return ViewGenerateCardStatement(request).render()
+    return ViewGenerateCardStatement(request).generate_json_response()
 
 
 @csrf_exempt
 def get_all_cards(request):
-    return ViewGetAllCards().render()
+    return ViewGetAllCards().generate_json_response()
 
 
 @csrf_exempt
 def get_all_user_cards(request):
-    return GetAllUserCards(request).render()
+    return GetAllUserCards(request).generate_json_response()
 
 
 @csrf_exempt
 def get_last_statement(request):
-    return GetLastStatement(request).render()
+    return GetLastStatement(request).generate_json_response()
 
 
 @csrf_exempt
 def get_all_statement_from_card(request):
-    return ViewGetAllStatementsFromCard(request).render()
+    return ViewGetAllStatementsFromCard(request).generate_json_response()
 
 
 @csrf_exempt    
 def modify_statement(request):
-    return ViewModifyStatement(request).render()
+    return ViewModifyStatement(request).generate_json_response()

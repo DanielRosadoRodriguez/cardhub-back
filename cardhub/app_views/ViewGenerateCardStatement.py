@@ -15,7 +15,7 @@ class ViewGenerateCardStatement():
         self.params = self._build_params()
 
 
-    def render(self):
+    def generate_json_response(self):
         if self._is_post_method():
             return self._build_response()
         else:
